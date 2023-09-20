@@ -2,8 +2,7 @@ const  { responseProvider }  = require('../../helper/response');
 
 
 
-
-const checkCreateUserInput = (req, res, next) => {
+const checkSignUpUserInput = (req, res, next) => {
 
   try {
     const { email, firstName, lastName, password, phoneNumber } = req.body;
@@ -39,6 +38,68 @@ const checkCreateUserInput = (req, res, next) => {
 };
 
 
+//first name
+//last name
+//email
+//address
+//course of study
+date of birth
+//university
+//CGPA
+
+
+
+
+
+const checkUserApplicationInput = (req, res, next) => {
+
+  try {
+    const { email, firstName, lastName, password, phoneNumber } = req.body;
+
+
+    if (typeof email !== 'string' || !email.includes('@')) {
+      return responseProvider( res, null, 'provide a valid email', 400)
+    }
+
+    if (typeof firstName !== 'string' || !firstName) {
+      return responseProvider( res, null, 'provide a valid firstName', 400)
+    }
+
+
+    if (typeof lastName !== 'string' || !lastName) {
+      return responseProvider( res, null, 'provide a valid lastName', 400)
+    }
+
+
+    if (typeof address !== 'string' || !address) {
+      return responseProvider( res, null, 'provide a valid address', 400)
+    }
+
+    if (typeof course !== 'string' || !course) {
+      return responseProvider( res, null, 'provide a valid course of study', 400)
+    }
+
+
+    if (typeof university !== 'string' || !university) {
+      return responseProvider( res, null, 'provide a valid university name', 400)
+    }
+
+        if (typeof cgpa !== 'number') {
+      return responseProvider( res, null, 'provide a valid cgpa', 400)
+    }
+
+
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+};
+
+
+
+
+
+
 
 
 const checkUserLoginInput = (req, res, next) => {
@@ -70,6 +131,7 @@ const checkUserLoginInput = (req, res, next) => {
 
 
 module.exports = {
-  checkCreateUserInput,  
-  checkUserLoginInput
+  checkSignUpUserInput,  
+  checkUserLoginInput,
+  checkUserApplicationInput
 }
