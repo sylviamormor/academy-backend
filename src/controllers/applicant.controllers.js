@@ -31,15 +31,6 @@ const signInApplicant = async (req, res, next) => {
 };
 
 
-/*{
-  status: 'success',
-  message: 'Applicants fetched successfully',
-  code: 200,
-  data: {
-    applicant,
-  },
-};*/
-
 
 
 
