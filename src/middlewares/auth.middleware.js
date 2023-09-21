@@ -24,9 +24,9 @@ const checkToken = (req, res, next) => {
 
     const token = authorization.split(' ')[1];
 
-    const user = jwt.verify(token, SECRET);
+    const applicant = jwt.verify(token, SECRET);
 
-    if (!user) {
+    if (!applicant) {
       return res.status(400).json({
         status: 'error',
         code: 401,
@@ -34,7 +34,7 @@ const checkToken = (req, res, next) => {
         data: null,
       });
     }
-    req.user = user;
+    req.applicant = applicant;
     return next();
   } catch (error) {
     return next(error);

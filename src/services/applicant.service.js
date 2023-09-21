@@ -1,8 +1,12 @@
+const { provideResponse } = require('../../helper/response');
+
+
 const {
     addUser,
     findUserByEmail,
     fetchAllUsers,
-  } = require('../queries/user.queries');
+    applicantImgSrc,
+  } = require('../queries/applicant.queries');
   
   
   const { runQuery } = require('../config/database.config');
@@ -13,15 +17,16 @@ const {
   const config = require('../config/env/index');
   
   
+
   
-  // create a user
+  // create a applicant
   const createUser = async (body) => {
     
-    const { password, username, email } = body;
+    const { password, applicantname, email } = body;
 
-    // Check if user already exist in db
-    const userExist = await runQuery(findUserByEmail, [email]);
-    if (userExist.length > 0) {
+    // Check if applicant already exist in db
+    const applicantExist = await runQuery(findUserByEmail, [email]);
+    if (applicantExist.length > 0) {
       throw {
         code: 409,
         message: 'User already exists',
@@ -33,31 +38,30 @@ const {
     const hash = bcrypt.hashSync(password, saltRounds);
     const response = await runQuery(addUser, [
      email,
-     username,
+     applicantname,
       hash
     ]);
-  
-    return {
-      code: 201,
-      status: 'success',
-      message: 'New user added successfully',
-      data: response[0],
-    };
+    
+    return provideResponse(
+      "success", 201 ,
+       'New applicant added successfully!', 
+       response[0]
+       )
   };
   
   
   
   
-  // user login
+  // applicant login
   
   const loginUser = async (body) => {
   
     const { email, password } = body;
     
-    // Check if that user exists inside the db
-    const user = await runQuery(findUserByEmail, [email]);
+    // Check if that applicant exists inside the db
+    const applicant = await runQuery(findUserByEmail, [email]);
     
-    if (user.length === 0) {
+    if (applicant.length === 0) {
       throw {
         code: 404,
         status: 'error',
@@ -66,11 +70,11 @@ const {
       };
     }
     
-    // Compare user passwords
-    const { password: dbPassword, id } = user[0];
+    // Compare applicant passwords
+    const { password: dbPassword, id } = applicant[0];
     
-    const userPassword = bcrypt.compareSync(password, dbPassword); // Boolean true/false
-    if (!userPassword) {
+    const applicantPassword = bcrypt.compareSync(password, dbPassword); // Boolean true/false
+    if (!applicantPassword) {
       throw {
         code: 400,
         status: 'error',
@@ -104,28 +108,49 @@ const {
     };
   };
   
-  /**
-   * Fetches all users in the database
-   * @returns {object} response object
-   */
+
+
+
+ //Fetches all applicants in the database
   const getAllUsers = async () => {
-    const users = await runQuery(fetchAllUsers);
+    const applicants = await runQuery(fetchAllUsers);
     return {
       status: 'success',
       message: 'Users fetched successfully',
       code: 200,
       data: {
-        users,
+        applicants,
       },
     };
   };
   
 
 
+
+
+
+  // upload applicant  image
+  // if successful then store the name
+  // secure url to the applicant table
+  const applicantImageSrc = async (imgSrc) => {
+
+    const applicants = await runQuery(applicantImgSrc, [imgSrc]);
+    return {
+      status: 'success',
+      message: 'User image url set',
+      code: 200,
+      data: {
+        applicants,
+      },
+    };
+  };
+  
+
   
   module.exports = {
     createUser,
     loginUser,
     getAllUsers,
+    applicantImageSrc
   };
   

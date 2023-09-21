@@ -3,7 +3,7 @@ const moment = require('moment')
 
 
 
-const checkSignUpUserInput = (req, res, next) => {
+const checkSignUpApplicantInput = (req, res, next) => {
 
   try {
     const { email, firstName, lastName, password, phoneNumber } = req.body;
@@ -49,11 +49,11 @@ const checkSignUpUserInput = (req, res, next) => {
 //university
 //CGPA
 
+//todo: refactor repetive validators
 
 
 
-
-const checkUserApplicationInput = (req, res, next) => {
+const checkApplicationInput = (req, res, next) => {
 
   try {
 
@@ -115,7 +115,7 @@ const checkUserApplicationInput = (req, res, next) => {
 
 
 
-const checkUserLoginInput = (req, res, next) => {
+const checkApplicantLoginInput = (req, res, next) => {
 
   try {
     const { email, password } = req.body;
@@ -144,7 +144,7 @@ const checkUserLoginInput = (req, res, next) => {
 
 
 module.exports = {
-  checkSignUpUserInput,  
-  checkUserLoginInput,
-  checkUserApplicationInput
+  checkSignUpApplicantInput,  
+  checkApplicantLoginInput,
+  checkApplicationInput
 }

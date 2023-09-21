@@ -1,9 +1,10 @@
 /* Replace with your SQL commands */
-CREATE TABLE IF NOT EXISTS users(
+CREATE TABLE IF NOT EXISTS applicants(
     id SERIAL PRIMARY KEY,
     email VARCHAR(100) UNIQUE NOT NULL,
     firstname VARCHAR(100) NOT NULL,
     lastname VARCHAR(100) NOT NULL,
+    applicant_image VARCHAR,
     password VARCHAR NOT NULL,
     dob DATE DEFAULT '1/18/2002',
     address VARCHAR(100) DEFAULT 'area',
