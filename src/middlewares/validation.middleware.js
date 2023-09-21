@@ -6,20 +6,20 @@ const moment = require('moment')
 const checkSignUpApplicantInput = (req, res, next) => {
 
   try {
-    const { email, firstName, lastName, password, phoneNumber } = req.body;
+    const { email, firstname, lastname, password, phonenumber } = req.body;
 
 
     if (typeof email !== 'string' || !email.includes('@')) {
       return responseProvider( res, null, 'provide a valid email', 400)
     }
 
-    if (typeof firstName !== 'string' || !firstName) {
-      return responseProvider( res, null, 'provide a valid firstName', 400)
+    if (typeof firstname !== 'string' || !firstname) {
+      return responseProvider( res, null, 'provide a valid firstname', 400)
     }
 
 
-    if (typeof lastName !== 'string' || !lastName) {
-      return responseProvider( res, null, 'provide a valid lastName', 400)
+    if (typeof lastname !== 'string' || !lastname) {
+      return responseProvider( res, null, 'provide a valid lastname', 400)
     }
 
 
@@ -27,7 +27,7 @@ const checkSignUpApplicantInput = (req, res, next) => {
       return responseProvider( res, null, 'provide a valid password', 400)
     }
 
-    if (typeof phoneNumber !== 'number' || phoneNumber.length < 10) {
+    if (typeof parseInt(phonenumber) !== 'number' || phonenumber.length < 10) {
       return responseProvider( res, null, 'provide a valid phone number', 400)
     }
 
@@ -58,8 +58,8 @@ const checkApplicationInput = (req, res, next) => {
   try {
 
     const { 
-      email, firstName,
-      lastName, address, 
+      email, firstname,
+      lastname, address, 
       course, university, 
       cgpa, dob 
       } = req.body;
@@ -69,13 +69,13 @@ const checkApplicationInput = (req, res, next) => {
       return responseProvider( res, null, 'provide a valid email', 400)
     }
 
-    if (typeof firstName !== 'string' || !firstName) {
-      return responseProvider( res, null, 'provide a valid firstName', 400)
+    if (typeof firstname !== 'string' || !firstname) {
+      return responseProvider( res, null, 'provide a valid firstname', 400)
     }
 
 
-    if (typeof lastName !== 'string' || !lastName) {
-      return responseProvider( res, null, 'provide a valid lastName', 400)
+    if (typeof lastname !== 'string' || !lastname) {
+      return responseProvider( res, null, 'provide a valid lastname', 400)
     }
 
 

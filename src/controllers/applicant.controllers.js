@@ -1,11 +1,14 @@
-const ApplicantService = require('../services/applicant.service');
+const applicantService = require('../services/applicant.service');
 
 
 
 //Controller creating a new applicant
 const createApplicant = async (req, res, next) => {
+
   try {
-    const response = await ApplicantService.createApplicant(req.body);
+
+    const response = await applicantService.createApplicant(req.body);
+    
     return res.status(response.code).json(response);
   } catch (error) {
     next(error);
@@ -20,7 +23,7 @@ const createApplicant = async (req, res, next) => {
 
 const signInApplicant = async (req, res, next) => {
   try {
-    const result = await ApplicantService.loginApplicant(req.body);
+    const result = await applicantService.loginApplicant(req.body);
     return res.status(result.code).json(result);
   } catch (error) {
     next(error);

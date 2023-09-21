@@ -2,9 +2,9 @@ const { provideResponse } = require('../../helper/response');
 
 
 const {
-    addUser,
-    findUserByEmail,
-    fetchAllUsers,
+    addApplicant,
+    findApplicantByEmail,
+    fetchAllApplicants,
     applicantImgSrc,
   } = require('../queries/applicant.queries');
   
@@ -20,26 +20,28 @@ const {
 
   
   // create a applicant
-  const createUser = async (body) => {
+  const createApplicant = async (body) => {
     
-    const { password, applicantname, email } = body;
+    const { password, firstname, lastname, email, phonenumber } = body;
 
     // Check if applicant already exist in db
-    const applicantExist = await runQuery(findUserByEmail, [email]);
+    const applicantExist = await runQuery(findApplicantByEmail, [email]);
     if (applicantExist.length > 0) {
       throw {
         code: 409,
-        message: 'User already exists',
+        message: 'Applicant already exists',
         data: null,
         status: 'error',
       };
     }
     const saltRounds = 12;
     const hash = bcrypt.hashSync(password, saltRounds);
-    const response = await runQuery(addUser, [
+    const response = await runQuery(addApplicant, [
      email,
-     applicantname,
-      hash
+     firstname,
+     lastname,
+     hash,
+     phonenumber
     ]);
     
     return provideResponse(
@@ -54,18 +56,18 @@ const {
   
   // applicant login
   
-  const loginUser = async (body) => {
+  const loginApplicant = async (body) => {
   
     const { email, password } = body;
     
     // Check if that applicant exists inside the db
-    const applicant = await runQuery(findUserByEmail, [email]);
+    const applicant = await runQuery(findApplicantByEmail, [email]);
     
     if (applicant.length === 0) {
       throw {
         code: 404,
         status: 'error',
-        message: 'User not found',
+        message: 'Applicant not found',
         data: null,
       };
     }
@@ -98,7 +100,7 @@ const {
     );
     return {
       status: 'success',
-      message: 'User login successfully',
+      message: 'Applicant login successfully',
       code: 200,
       data: {
         id,
@@ -112,11 +114,11 @@ const {
 
 
  //Fetches all applicants in the database
-  const getAllUsers = async () => {
-    const applicants = await runQuery(fetchAllUsers);
+  const getAllApplicants = async () => {
+    const applicants = await runQuery(fetchAllApplicants);
     return {
       status: 'success',
-      message: 'Users fetched successfully',
+      message: 'Applicants fetched successfully',
       code: 200,
       data: {
         applicants,
@@ -137,7 +139,7 @@ const {
     const applicants = await runQuery(applicantImgSrc, [imgSrc]);
     return {
       status: 'success',
-      message: 'User image url set',
+      message: 'Applicant image url set',
       code: 200,
       data: {
         applicants,
@@ -148,9 +150,9 @@ const {
 
   
   module.exports = {
-    createUser,
-    loginUser,
-    getAllUsers,
+    createApplicant,
+    loginApplicant,
+    getAllApplicants,
     applicantImageSrc
   };
   
