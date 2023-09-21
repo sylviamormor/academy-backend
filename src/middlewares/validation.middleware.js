@@ -1,4 +1,5 @@
 const  { responseProvider }  = require('../../helper/response');
+const moment = require('moment')
 
 
 
@@ -41,9 +42,10 @@ const checkSignUpUserInput = (req, res, next) => {
 //first name
 //last name
 //email
+//password
 //address
 //course of study
-date of birth
+//date of birth
 //university
 //CGPA
 
@@ -54,7 +56,13 @@ date of birth
 const checkUserApplicationInput = (req, res, next) => {
 
   try {
-    const { email, firstName, lastName, password, phoneNumber } = req.body;
+
+    const { 
+      email, firstName,
+      lastName, address, 
+      course, university, 
+      cgpa, dob 
+      } = req.body;
 
 
     if (typeof email !== 'string' || !email.includes('@')) {
@@ -84,8 +92,13 @@ const checkUserApplicationInput = (req, res, next) => {
       return responseProvider( res, null, 'provide a valid university name', 400)
     }
 
-        if (typeof cgpa !== 'number') {
+    if (typeof cgpa !== 'number') {
       return responseProvider( res, null, 'provide a valid cgpa', 400)
+    }
+
+
+    if (moment(dob, 'DD/MM/YYYY', true).isValid) {
+      return responseProvider( res, null, 'provide a valid date of birth', 400)
     }
 
 
