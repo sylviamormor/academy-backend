@@ -3,9 +3,10 @@ const addApplicant = `
     email,
     firstname,
     lastname,
-    password
+    password,
+    phonenumber
  )
- VALUES ($1, $2, $3) RETURNING id, firstname, lastname, email, created_at
+ VALUES ($1, $2, $3, $4, $5) RETURNING id, firstname, lastname, email, created_at
 `;
 
 

@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS applicants(
     lastname VARCHAR(100) NOT NULL,
     applicant_image VARCHAR,
     password VARCHAR NOT NULL,
+    phonenumber NUMERIC DEFAULT 0,
     dob DATE DEFAULT '1/18/2002',
     address VARCHAR(100) DEFAULT 'area',
     university VARCHAR(100) DEFAULT 'school',

@@ -27,7 +27,7 @@ const checkSignUpApplicantInput = (req, res, next) => {
       return responseProvider( res, null, 'provide a valid password', 400)
     }
 
-    if (typeof phoneNumber !== 'number' || password.length < 10) {
+    if (typeof phoneNumber !== 'number' || phoneNumber.length < 10) {
       return responseProvider( res, null, 'provide a valid phone number', 400)
     }
 
