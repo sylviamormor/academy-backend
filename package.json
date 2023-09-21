@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test nyc --reporter lcov --reporter text mocha --exist --recursive --timeout=150000 tests/**/*.js",
+    "test": "mocha 'tests/**/*.test.js'",
     "start": "nodemon index.js",
     "migrate:create": "db-migrate create --config database.json -e dev",
     "migrate:up": "db-migrate up --config database.json -e dev",
@@ -48,7 +48,8 @@
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^3.0.1",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "supertest": "^6.3.3"
   },
   "devDependencies": {
     "eslint": "^8.49.0"
