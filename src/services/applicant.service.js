@@ -71,11 +71,14 @@ const {
         data: null,
       };
     }
+
     
     // Compare applicant passwords
     const { password: dbPassword, id } = applicant[0];
     
-    const applicantPassword = bcrypt.compareSync(password, dbPassword); // Boolean true/false
+    const applicantPassword = bcrypt.compareSync(password, dbPassword); 
+
+
     if (!applicantPassword) {
       throw {
         code: 400,
@@ -88,7 +91,8 @@ const {
     const options = {
       expiresIn: '1d',
     };
-  
+
+    
     // Generate token for authentication purposes
     const token = jwt.sign(
       {
