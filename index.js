@@ -1,25 +1,24 @@
-//Import database config
-require('./src/config/database.config')
+// Import database config
+require('./src/config/database.config');
 
 const express = require('express');
-const apiVersion1 = require('./src/config/versioning/v1')
-const { notFound, appErrorHandler, genericErrorHandler } = require('./src/middlewares/error.middleware')
-const envConfig = require('./src/config/env/index')
+const apiVersion1 = require('./src/config/versioning/v1');
+const { notFound, appErrorHandler, genericErrorHandler } = require('./src/middlewares/error.middleware');
+const envConfig = require('./src/config/env/index');
 
 const app = express();
 
-app.use(express.json())
-
 const PORT = envConfig.APP_PORT || 7006;
 
+app.use(express.json());
+
 app.listen(PORT, () => {
-    console.log(`Application running on port ${PORT}`)
-})
+  console.log(`Application running on port ${PORT}`);
+});
 
 app.use('/api/v1', apiVersion1);
 app.use(appErrorHandler);
 app.use(genericErrorHandler);
-app.use(notFound)
-
+app.use(notFound);
 
 module.exports = app;

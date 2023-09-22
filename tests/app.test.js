@@ -1,6 +1,6 @@
  // test.js
 const request = require( 'supertest');
-const  app  = require( '../index.js');
+const  app = require( '../index.js');
 const  { expect } = require( 'chai');
 //const { userData } = require( '../fixtures/user.fixture.js');
 
@@ -18,7 +18,7 @@ describe('Testing Express Endpoints', () => {
         password: 'gnopgn4t45y-4rggkjnr343'
       }
 
-    const res = await request(app).post('/api/v1/apply').send(applicantData);
+    const res = await request(app).post('/api/v1/apply/signup').send(applicantData);
     expect(res.status).to.equal(201);
   });
 
