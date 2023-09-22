@@ -26,7 +26,7 @@ const {
 
     // Check if applicant already exist in db
     const applicantExist = await runQuery(findApplicantByEmail, [email]);
-    if (applicantExist.length > 0) {
+    if (applicantExist.length.trim > 0) {
       throw {
         code: 409,
         message: 'Applicant already exists',

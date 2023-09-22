@@ -3,7 +3,7 @@ const router = express.Router();
 
 
 const { checkSignUpApplicantInput, checkApplicantLoginInput} = require('../middlewares/validation.middleware')
-const { applicantImageUploader } = require('../middlewares/applicant.middleware')
+const { applicantImageUploader, applicantDocUploader } = require('../middlewares/applicant.middleware')
 
 
 const {  uploadUserImgUtil } = require('../../utils/applicant.img.upload');
@@ -24,7 +24,7 @@ const {
 
 router.post('/signup', checkSignUpApplicantInput, createApplicant);
 
-router.post('/application',  uploadApplicantImg.single('image'), applicantImageUploader)
+router.post('/application',  uploadApplicantImg.single('image'), applicantImageUploader, applicantDocUploader)
 
 router.post('/login', checkApplicantLoginInput, signInApplicant);
 

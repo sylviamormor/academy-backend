@@ -1,5 +1,5 @@
 const { runQuery } = require('../config/database.config');
-const { fetchApplicantById, applicantImgSrc } = require('../queries/applicant.queries');
+const { fetchApplicantById, applicantImgSrc,applicantDocumentUrl } = require('../queries/applicant.queries');
 
 
 
@@ -35,7 +35,7 @@ const applicantImageUploader = async (req, res, next) => {
       return res.status(400).json({
         status: 'error',
         code: 400,
-        message: 'applicant image failed',
+        message: 'Can"t upload image, try again!',
         data: null,
       });
     }
@@ -77,6 +77,50 @@ const setApplicantImageDb = async (req, res, next) => {
 
 
 
+//upload applicant image
+const applicantDocUploader = async (req, res, next) => {
+  try {    
+    const result = await req.file
+
+    if (!result) {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'Your document failed to upload',
+        data: null,
+      });
+    }
+
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+};
+
+
+//Upload doc url to database
+const setApplicantDocDb = async (req, res, next) => {
+  try {
+    const { fistname, lastname } = req.body;
+    
+    const { result } = req.file.path
+
+    const [applicantDoc = null] = await runQuery(applicantDocumentUrl, [fistname, lastname, result]);
+
+    if (!applicantDoc) {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'Applicant document is not set in the database',
+        data: null,
+      });
+    }
+
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+};
 
 
 
@@ -84,5 +128,7 @@ const setApplicantImageDb = async (req, res, next) => {
 module.exports = {
   checkIfIdExists,
   applicantImageUploader,
-  setApplicantImageDb
+  setApplicantImageDb,
+  setApplicantDocDb,
+  applicantDocUploader
 };

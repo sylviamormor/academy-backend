@@ -35,11 +35,18 @@ RETURNING firstname, lastname, applicant_image
 `;
 
 
+
+// set applicant document url
+const applicantDocumentUrl = ` UPDATE applicants SET applicant_docs = $3, WHERE firstname=$1, lastname=$2 RETURNING firstname, lastname, applicant_docs`;
+
+
+
 module.exports = {
     addApplicant,
     findApplicantByEmail,
     fetchAllApplicants,
     fetchApplicantById,
-    applicantImgSrc
+    applicantImgSrc,
+    applicantDocumentUrl
 }
 
