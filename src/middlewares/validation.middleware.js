@@ -1,150 +1,248 @@
-const  { responseProvider }  = require('../../helper/response');
-const moment = require('moment')
-
-
+const moment = require('moment');
+const path = require('node:path');
+const isUrl = require('is-url');
+const { responseProvider } = require('../../helper/response');
+const adminMiddlewares = require('./admin.middleware');
 
 const checkSignUpApplicantInput = (req, res, next) => {
-
   try {
-    const { email, firstname, lastname, password, phonenumber } = req.body;
-
+    const {
+      email, firstname, lastname, password, phonenumber,
+    } = req.body;
 
     if (typeof email !== 'string' || !email.includes('@')) {
-      return responseProvider( res, null, 'provide a valid email', 400)
+      return responseProvider(res, null, 'provide a valid email', 400);
     }
 
     if (typeof firstname !== 'string' || !firstname) {
-      return responseProvider( res, null, 'provide a valid firstname', 400)
+      return responseProvider(res, null, 'provide a valid firstname', 400);
     }
-
 
     if (typeof lastname !== 'string' || !lastname) {
-      return responseProvider( res, null, 'provide a valid lastname', 400)
+      return responseProvider(res, null, 'provide a valid lastname', 400);
     }
-
 
     if (typeof password !== 'string' || password.length < 8) {
-      return responseProvider( res, null, 'provide a valid password', 400)
+      return responseProvider(res, null, 'provide a valid password', 400);
     }
 
-    if (typeof parseInt(phonenumber) !== 'number' || phonenumber.length < 10) {
-      return responseProvider( res, null, 'provide a valid phone number', 400)
+    if (typeof parseInt(phonenumber, 10) !== 'number' || phonenumber.length < 10) {
+      return responseProvider(res, null, 'provide a valid phone number', 400);
     }
 
-
-    return next();
+    next();
   } catch (error) {
-    return next(error);
+    next(error);
   }
 };
 
+// check image extensions
+function checkImageExtension(imageExtension) {
+  const allowedExtensions = ['.png', '.jpg', '.jpeg'];
 
-//first name
-//last name
-//email
-//password
-//address
-//course of study
-//date of birth
-//university
-//CGPA
+  if (allowedExtensions.includes(imageExtension)) {
+    return true;
+  }
+  return false;
+}
 
-//todo: refactor repetive validators
-
-
+// todo: refactor repetive validators
+// todo: auto populate email, first, last name
 
 const checkApplicationInput = (req, res, next) => {
-
   try {
+    const {
+      // email, firstname,
+      // lastname,
 
-    const { 
-      email, firstname,
-      lastname, address, 
-      course, university, 
-      cgpa, dob 
-      } = req.body;
+      address,
+      course, university,
+      cgpa, dob,
+      image, cv,
+    } = req.body;
 
+    // if (typeof email !== 'string' || !email.includes('@')) {
+    //   return responseProvider( res, null, 'provide a valid email', 400)
+    // }
 
-    if (typeof email !== 'string' || !email.includes('@')) {
-      return responseProvider( res, null, 'provide a valid email', 400)
-    }
+    // if (typeof firstname !== 'string' || !firstname) {
+    //   return responseProvider( res, null, 'provide a valid firstname', 400)
+    // }
 
-    if (typeof firstname !== 'string' || !firstname) {
-      return responseProvider( res, null, 'provide a valid firstname', 400)
-    }
-
-
-    if (typeof lastname !== 'string' || !lastname) {
-      return responseProvider( res, null, 'provide a valid lastname', 400)
-    }
-
+    // if (typeof lastname !== 'string' || !lastname) {
+    //   return responseProvider( res, null, 'provide a valid lastname', 400)
+    // }
 
     if (typeof address !== 'string' || !address) {
-      return responseProvider( res, null, 'provide a valid address', 400)
+      return responseProvider(res, null, 'provide a valid address', 400);
     }
 
     if (typeof course !== 'string' || !course) {
-      return responseProvider( res, null, 'provide a valid course of study', 400)
+      return responseProvider(res, null, 'provide a valid course of study', 400);
     }
 
-
     if (typeof university !== 'string' || !university) {
-      return responseProvider( res, null, 'provide a valid university name', 400)
+      return responseProvider(res, null, 'provide a valid university name', 400);
     }
 
     if (typeof cgpa !== 'number') {
-      return responseProvider( res, null, 'provide a valid cgpa', 400)
+      return responseProvider(res, null, 'provide a valid cgpa', 400);
     }
 
-
-    if (moment(dob, 'DD/MM/YYYY', true).isValid) {
-      return responseProvider( res, null, 'provide a valid date of birth', 400)
+    if (!moment(dob, 'DD/MM/YYYY', true).isValid) {
+      return responseProvider(res, null, 'provide a valid date of birth', 400);
     }
 
+    // if  (image.split('.').pop() !== 'png') {
 
-    return next();
+    //   return responseProvider( res, null, 'provide a valid image', 400)
+    // }
+
+    if (checkImageExtension(path.extname(image)) === false) {
+      return responseProvider(res, null, 'provide a valid image', 400);
+    }
+
+    if (path.extname(cv) !== '.pdf') {
+      return responseProvider(res, null, 'provide a valid cv document', 400);
+    }
+
+    next();
   } catch (error) {
-    return next(error);
+    next(error);
   }
 };
 
-
-
-
-
-
-
-
 const checkApplicantLoginInput = (req, res, next) => {
-
   try {
     const { email, password } = req.body;
 
-
     if (typeof email !== 'string' || !email.includes('@')) {
-      return responseProvider( res, null, 'provide a valid email', 400)
+      return responseProvider(res, null, 'provide a valid email', 400);
     }
-
 
     if (typeof password !== 'string' || password.length < 8) {
-      return responseProvider( res, null, 'provide a valid password', 400)
+      return responseProvider(res, null, 'provide a valid password', 400);
     }
 
-    return next();
+    next();
   } catch (error) {
-    return next(error);
+    next(error);
   }
 };
 
+const checkCreateApplicationInputs = (req, res, next) => {
+  try {
+    const {
+      link, batch_id, closure_date, instructions,
+    } = req.body;
 
+    if (!isUrl(link)) {
+      return responseProvider(res, null, 'provide a valid url link', 400);
+    }
 
+    if (typeof batch_id !== 'number') {
+      return responseProvider(res, null, 'provide a valid batch Id', 400);
+    }
 
+    if (!moment(closure_date, 'DD/MM/YYYY', true).isValid) {
+      return responseProvider(res, null, 'provide a valid application closure date', 400);
+    }
 
+    if (!instructions) {
+      return responseProvider(res, null, 'provide valid instructions', 400);
+    }
 
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
 
+const checkCreateAssessmentInput = (req, res, next) => {
+  try {
+    const { batch, question, timer } = req.body;
 
+    if (typeof batch !== 'number') {
+      return responseProvider(res, null, 'provide a valid batch Id', 400);
+    }
+
+    if (typeof question !== 'object') {
+      return responseProvider(res, null, 'provide a valid batch Id', 400);
+    }
+
+    if (typeof timer !== 'number') {
+      return responseProvider(res, null, 'provide a valid timer', 400);
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+// TODO: check if email has @
+// check if the email already exists
+// check if the application status is one of
+// pending, approved, declined
+
+const checkDecisionInput = (req, res, next) => {
+  const applicationDecision = ['pending', 'declined', 'approved'];
+
+  try {
+    const { email, applicationStatus } = req.body;
+
+    if (typeof email !== 'string' || !email.includes('@')) {
+      return responseProvider(res, null, 'provide a valid email address', 400);
+    }
+
+    if (!adminMiddlewares.checkIfEmailExists(email)) {
+      return responseProvider(res, null, 'applicant does not exist', 400);
+    }
+
+    if (!applicationDecision.includes(applicationStatus)) {
+      return responseProvider(res, null, 'provide a valid application decision', 400);
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+const checkBatchIdInput = (req, res, next) => {
+  try {
+    const { batch, newBatchId } = req.body;
+
+    if (typeof batch !== 'number' || typeof newBatchId !== 'number') {
+      return responseProvider(res, null, 'provide a valid batch Id', 400);
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+const checkTimerInput = (req, res, next) => {
+  try {
+    const { timer } = req.body;
+
+    if (typeof timer !== 'number') {
+      return responseProvider(res, null, 'provide a valid timer', 400);
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
-  checkSignUpApplicantInput,  
+  checkSignUpApplicantInput,
   checkApplicantLoginInput,
-  checkApplicationInput
-}
+  checkApplicationInput,
+  checkCreateApplicationInputs,
+  checkCreateAssessmentInput,
+  checkDecisionInput,
+  checkBatchIdInput,
+  checkTimerInput,
+};

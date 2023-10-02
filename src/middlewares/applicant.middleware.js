@@ -1,20 +1,18 @@
 const { runQuery } = require('../config/database.config');
-const { fetchApplicantById, applicantImgSrc,applicantDocumentUrl } = require('../queries/applicant.queries');
+const applicantQueries = require('../queries/applicant.queries');
 
-const cloudinary = require("../../utils/cloudinary");
+const adminQueries = require('../queries/admin.queries');
 
+const cloudinary = require('../../utils/cloudinary');
+const { responseProvider } = require('../../helper/response');
 
 const checkIfIdExists = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const [applicant = null] = await runQuery(fetchApplicantById, [id]);
+    const [applicant = null] = await runQuery(applicantQueries.fetchApplicantById, [id]);
+
     if (!applicant) {
-      return res.status(400).json({
-        status: 'error',
-        code: 400,
-        message: 'Applicant does not exist',
-        data: null,
-      });
+      return responseProvider(res, null, 'Applicant does not exist', 400);
     }
 
     req.applicant = applicant;
@@ -24,57 +22,52 @@ const checkIfIdExists = async (req, res, next) => {
   }
 };
 
+// set applicant batch id
+const setBatchId = async (req, res, next) => {
+  try {
+    const { email } = req.body;
 
+    const [{ batch_id = null }] = await runQuery(adminQueries.currentBatch);
 
+    if (!batch_id) {
+      return responseProvider(res, null, 'batch id not found', 501);
+    }
 
+    const [setBatch = null] = await runQuery(applicantQueries.setApplicantBatchId,
+      [email, batch_id]);
 
-//upload applicant image
+    if (!setBatch) {
+      return responseProvider(res, null, 'batch id not set', 501);
+    }
+
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const getSecureUrl = async (filePath) => {
+  try {
+    const { secure_url } = await cloudinary.uploader.upload(filePath);
+
+    return secure_url;
+  } catch (error) {
+    return error;
+  }
+};
+
+// upload applicant image
 const applicantImageUploader = async (req, res, next) => {
   try {
-    // Upload image to cloudinary
-    const  { secure_url } = await cloudinary.uploader.upload(req.file.path);
+    const { image } = req.body;
 
+    const imgUrl = await getSecureUrl(image);
 
-
-    if (!secure_url) {
-      return res.status(400).json({
-        status: 'error',
-        code: 400,
-        message: 'Cannot upload image, try again!',
-        data: null,
-      });
+    if (!imgUrl || imgUrl instanceof Error) {
+      return responseProvider(res, null, 'Cannot upload image, try again!', 400);
     }
 
-    return next();
-
-  } catch (error) {
-    return next(error);
-  }
-};
-
-
-
-
-
-//upload applicant image src to database
-const setApplicantImageDb = async (req, res, next) => {
-  try {
-    const { fistname, lastname } = req.body;
-
-    const { result } = req.file
-
-
-
-    const [applicantImg = null] = await runQuery(applicantImgSrc, [fistname, lastname, result]);
-
-    if (!applicantImg) {
-      return res.status(400).json({
-        status: 'error',
-        code: 400,
-        message: 'Applicant image not set',
-        data: null,
-      });
-    }
+    req.imgUrl = imgUrl;
 
     return next();
   } catch (error) {
@@ -82,221 +75,28 @@ const setApplicantImageDb = async (req, res, next) => {
   }
 };
 
-
-
-
-//upload applicant image
+// upload applicant cv document
 const applicantDocUploader = async (req, res, next) => {
-
   try {
-   // Upload cv.pdf to cloudinary
-    const  { secure_url } = await cloudinary.uploader.upload(req.file.path);
+    const { cv } = req.body;
 
+    const cvUrl = await getSecureUrl(cv);
 
-
-    if (!secure_url) {
-      return res.status(400).json({
-        status: 'error',
-        code: 400,
-        message: 'Cannot upload cv, try again!',
-        data: null,
-      });
+    if (!cvUrl || cvUrl instanceof Error) {
+      return responseProvider(res, null, 'Cannot upload cv, try again!', 400);
     }
 
-    return next();
-
-  } catch (error) {
-    return next(error);
-  }
-};
-
-
-
-//Upload doc url to database
-const setApplicantDocDb = async (req, res, next) => {
-  try {
-    const { fistname, lastname } = req.body;
-
-    const { result } = req.file.path
-
-    const [applicantDoc = null] = await runQuery(applicantDocumentUrl, [fistname, lastname, result]);
-
-    if (!applicantDoc) {
-      return res.status(400).json({
-        status: 'error',
-        code: 400,
-        message: 'Applicant document is not set in the database',
-        data: null,
-      });
-    }
+    req.cvUrl = cvUrl;
 
     return next();
   } catch (error) {
     return next(error);
   }
 };
-
-
-
 
 module.exports = {
   checkIfIdExists,
   applicantImageUploader,
-  setApplicantImageDb,
-  setApplicantDocDb,
-  applicantDocUploader
+  applicantDocUploader,
+  setBatchId,
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const { runQuery } = require('../config/database.config');
-// const { fetchApplicantById, applicantImgSrc,applicantDocumentUrl } = require('../queries/applicant.queries');
-
-
-
-// const checkIfIdExists = async (req, res, next) => {
-//   try {
-//     const { id } = req.params;
-//     const [applicant = null] = await runQuery(fetchApplicantById, [id]);
-//     if (!applicant) {
-//       return res.status(400).json({
-//         status: 'error',
-//         code: 400,
-//         message: 'Applicant does not exist',
-//         data: null,
-//       });
-//     }
-
-//     req.applicant = applicant;
-//     return next();
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
-
-
-
-
-// //upload applicant image
-// const applicantImageUploader = async (req, res, next) => {
-//   try {    
-//     const result = await req.file
-
-//     if (!result) {
-//       return res.status(400).json({
-//         status: 'error',
-//         code: 400,
-//         message: 'Can"t upload image, try again!',
-//         data: null,
-//       });
-//     }
-
-//     return next();
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
-
-
-
-
-
-// //upload applicant image src to database
-// const setApplicantImageDb = async (req, res, next) => {
-//   try {
-//     const { fistname, lastname } = req.body;
-    
-//     const { result } = req.file.path
-
-//     const [applicantImg = null] = await runQuery(applicantImgSrc, [fistname, lastname, result]);
-
-//     if (!applicantImg) {
-//       return res.status(400).json({
-//         status: 'error',
-//         code: 400,
-//         message: 'Applicant image not set',
-//         data: null,
-//       });
-//     }
-
-//     return next();
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
-
-
-
-
-// //upload applicant image
-// const applicantDocUploader = async (req, res, next) => {
-//   try {    
-//     const result = await req.file
-
-//     if (!result) {
-//       return res.status(400).json({
-//         status: 'error',
-//         code: 400,
-//         message: 'Your document failed to upload',
-//         data: null,
-//       });
-//     }
-
-//     return next();
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
-
-
-// //Upload doc url to database
-// const setApplicantDocDb = async (req, res, next) => {
-//   try {
-//     const { fistname, lastname } = req.body;
-    
-//     const { result } = req.file.path
-
-//     const [applicantDoc = null] = await runQuery(applicantDocumentUrl, [fistname, lastname, result]);
-
-//     if (!applicantDoc) {
-//       return res.status(400).json({
-//         status: 'error',
-//         code: 400,
-//         message: 'Applicant document is not set in the database',
-//         data: null,
-//       });
-//     }
-
-//     return next();
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
-
-
-
-
-// module.exports = {
-//   checkIfIdExists,
-//   applicantImageUploader,
-//   setApplicantImageDb,
-//   setApplicantDocDb,
-//   applicantDocUploader
-// };

@@ -1,102 +1,44 @@
 const express = require('express');
+
 const router = express.Router();
+const { checkToken } = require('../middlewares/auth.middleware');
 
+const validator = require('../middlewares/validation.middleware');
 
-const { 
-  checkSignUpApplicantInput,
-   checkApplicantLoginInput, 
-   checkApplicationInput
-  } = require('../middlewares/validation.middleware')
+const applicantMiddleware = require('../middlewares/applicant.middleware');
 
-const { 
-  applicantImageUploader, 
-  applicantDocUploader,
-  setApplicantImageDb,
-  setApplicantDocDb
+// const { imgUpload, pdfUpload } = require("../../utils/multer");
 
-} = require('../middlewares/applicant.middleware')
+// const { imgUpload } = require("../../utils/multer");
 
+const applicantControllers = require('../controllers/applicant.controllers');
 
-const { imgUpload, pdfUpload } = require("../../utils/multer");
+// signup route
+router.post(
+  '/signup',
+  validator.checkSignUpApplicantInput,
+  applicantControllers.createApplicant,
+);
 
+// login route
+router.post(
+  '/login',
+  validator.checkApplicantLoginInput,
+  applicantControllers.signInApplicant,
+);
 
-const {
-  createApplicant,
-  signInApplicant,
-} = require('../controllers/applicant.controllers');
+// application input route
 
-
-
-router.post('/signup', checkSignUpApplicantInput, createApplicant);
-
-
-
-router.post('/upload', checkApplicationInput, imgUpload.single("image"),
- applicantImageUploader, setApplicantImageDb, pdfUpload.single("pdf"), 
- applicantDocUploader, setApplicantDocDb)
-
-router.post('/login', checkApplicantLoginInput, signInApplicant);
-
+router.post(
+  '/upload',
+  checkToken,
+  validator.checkApplicationInput,
+  applicantMiddleware.setBatchId,
+  applicantMiddleware.applicantImageUploader,
+  applicantControllers.applicantImageDb,
+  applicantMiddleware.applicantDocUploader,
+  applicantControllers.applicantDocDb,
+  applicantControllers.applicantDetailsDb,
+);
 
 module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const express = require('express');
-// const router = express.Router();
-
-
-// const { checkSignUpApplicantInput, checkApplicantLoginInput} = require('../middlewares/validation.middleware')
-// const { applicantImageUploader, applicantDocUploader } = require('../middlewares/applicant.middleware')
-
-
-// const {  uploadUserImgUtil } = require('../../utils/applicant.img.upload');
-// const multer = require('multer');
-// const  uploadApplicantImg = multer({  uploadUserImgUtil });
-
-
-
-// const {
-//   createApplicant,
-//   signInApplicant,
-// } = require('../controllers/applicant.controllers');
-
-
-
-// //router.post('/upload', uploadUserImg.single('image'), applicantImageUploader );
-
-
-// router.post('/signup', checkSignUpApplicantInput, createApplicant);
-
-// router.post('/application',  uploadApplicantImg.single('image'), applicantImageUploader, applicantDocUploader)
-
-// router.post('/login', checkApplicantLoginInput, signInApplicant);
-
-
-// module.exports = router;

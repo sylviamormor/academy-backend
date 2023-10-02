@@ -1,13 +1,15 @@
  // test.js
 const request = require( 'supertest');
-const { app } = require( '../index.js');
-const { expect } = require( 'chai');
+const  app = require( '../index.js');
+const  { expect } = require( 'chai');
 //const { userData } = require( '../fixtures/user.fixture.js');
 
 
 
 
 describe('Testing Express Endpoints', () => {
+
+
 
   it('should test for create user', async () => {
 
@@ -18,7 +20,7 @@ describe('Testing Express Endpoints', () => {
         password: 'gnopgn4t45y-4rggkjnr343'
       }
 
-    const res = await request(app).post('/api/v1/apply').send(applicantData);
+    const res = await request(app).post('/api/v1/apply/signup').send(applicantData);
     expect(res.status).to.equal(201);
   });
 
@@ -36,10 +38,10 @@ describe('Testing Express Endpoints', () => {
   });
 
     //Write your assignment here
-  
+
   // Write a test to fail input validation for create user
   it('should fail input validation', async () => {
-    
+
     const  invalidApplicantData = {
       email: 'usergmail.com',
       username: 4,
