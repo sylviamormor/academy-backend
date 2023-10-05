@@ -48,7 +48,7 @@ const setBatchId = async (req, res, next) => {
 
 const getSecureUrl = async (filePath) => {
   try {
-    const { secure_url } = await cloudinary.uploader.upload(filePath);
+    const { secure_url } = await cloudinary.uploader.upload(filePath, {use_filename:true, resource_type: 'raw'});
 
     return secure_url;
   } catch (error) {
