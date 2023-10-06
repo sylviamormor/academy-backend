@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const { runQuery } = require('../config/database.config');
 const applicantQueries = require('../queries/applicant.queries');
 
@@ -6,17 +7,33 @@ const adminQueries = require('../queries/admin.queries');
 const cloudinary = require('../../utils/cloudinary');
 const { responseProvider } = require('../../helper/response');
 
-const checkIfIdExists = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const [applicant = null] = await runQuery(applicantQueries.fetchApplicantById, [id]);
+// const checkIfIdExists = async (req, res, next) => {
+//   try {
+//     const { id } = req.params;
+//     const [applicant = null] = await runQuery(applicantQueries.fetchApplicantById, [id]);
 
-    if (!applicant) {
-      return responseProvider(res, null, 'Applicant does not exist', 400);
+//     if (!applicant) {
+//       return responseProvider(res, null, 'Applicant does not exist', 400);
+//     }
+
+//     req.applicant = applicant;
+//     return next();
+//   } catch (error) {
+//     return next(error);
+//   }
+// };
+
+// set applicant batch id
+const getCurrentBatchId = async (req, res, next) => {
+  try {
+    const [{ batch_id = null }] = await runQuery(adminQueries.currentBatch);
+
+    if (!batch_id) {
+      return responseProvider(res, null, 'batch id not found', 501);
     }
 
-    req.applicant = applicant;
-    return next();
+    req.batch_id = batch_id;
+    next();
   } catch (error) {
     return next(error);
   }
@@ -26,15 +43,12 @@ const checkIfIdExists = async (req, res, next) => {
 const setBatchId = async (req, res, next) => {
   try {
     const { email } = req.body;
+    const { batch_id } = req.batch_id;
 
-    const [{ batch_id = null }] = await runQuery(adminQueries.currentBatch);
-
-    if (!batch_id) {
-      return responseProvider(res, null, 'batch id not found', 501);
-    }
-
-    const [setBatch = null] = await runQuery(applicantQueries.setApplicantBatchId,
-      [email, batch_id]);
+    const [setBatch = null] = await runQuery(
+      applicantQueries.setApplicantBatchId,
+      [email, batch_id],
+    );
 
     if (!setBatch) {
       return responseProvider(res, null, 'batch id not set', 501);
@@ -48,7 +62,7 @@ const setBatchId = async (req, res, next) => {
 
 const getSecureUrl = async (filePath) => {
   try {
-    const { secure_url } = await cloudinary.uploader.upload(filePath, {use_filename:true, resource_type: 'raw'});
+    const { secure_url } = await cloudinary.uploader.upload(filePath, { use_filename: true, resource_type: 'raw' });
 
     return secure_url;
   } catch (error) {
@@ -95,7 +109,8 @@ const applicantDocUploader = async (req, res, next) => {
 };
 
 module.exports = {
-  checkIfIdExists,
+  // checkIfIdExists,
+  getCurrentBatchId,
   applicantImageUploader,
   applicantDocUploader,
   setBatchId,

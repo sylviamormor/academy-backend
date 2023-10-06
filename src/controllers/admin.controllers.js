@@ -1,106 +1,100 @@
-const adminService = require('../services/admin.service');
+const { AdminService } = require('../services/admin.service');
+const { responseProvider } = require('../../helper/response');
 
-const createApplication = async (req, res, next) => {
-  try {
-    const applicationResponse = await adminService.createApplication(req.body);
+class AdminController {
+  static async createApplication(req, res) {
+    try {
+      const applicationResponse = await AdminService.createApplication(req.body);
 
-    return res.status(applicationResponse.code).json(applicationResponse);
-  } catch (error) {
-    next(error);
+      return res.status(applicationResponse.code).json(applicationResponse);
+    } catch (error) {
+      return responseProvider(res, error.data, error.message, error.code);
+    }
   }
-};
 
-const createAssessment = async (req, res, next) => {
-  try {
-    const assessmentResponse = await adminService.createAssessment(req.body);
+  static async createAssessment(req, res) {
+    try {
+      const assessmentResponse = await AdminService.createAssessment(req.body);
 
-    return res.status(assessmentResponse.code).json(assessmentResponse);
-  } catch (error) {
-    next(error);
+      return res.status(assessmentResponse.code).json(assessmentResponse);
+    } catch (error) {
+      return responseProvider(res, error.data, error.message, error.code);
+    }
   }
-};
 
-// approve or decline applicants application
-const approveDeclineApplication = async (req, res, next) => {
-  try {
-    const assessmentResponse = await adminService.approveDeclineApplication(req.body);
+  // approve or decline applicants application
+  static async approveDeclineApplication(req, res) {
+    try {
+      const assessmentResponse = await AdminService.approveDeclineApplication(req.body);
 
-    return res.status(assessmentResponse.code).json(assessmentResponse);
-  } catch (error) {
-    next(error);
+      return res.status(assessmentResponse.code).json(assessmentResponse);
+    } catch (error) {
+      return responseProvider(res, error.data, error.message, error.code);
+    }
   }
-};
 
-const applicationDashboard = async (req, res, next) => {
-  try {
-    const assessmentResponse = await adminService.applicationDashboard();
+  static async applicationDashboard(req, res) {
+    try {
+      const assessmentResponse = await AdminService.applicationDashboard();
 
-    return res.status(assessmentResponse.code).json(assessmentResponse);
-  } catch (error) {
-    next(error);
+      return res.status(assessmentResponse.code).json(assessmentResponse);
+    } catch (error) {
+      return responseProvider(res, error.data, error.message, error.code);
+    }
   }
-};
 
-const applicantEntries = async (req, res, next) => {
-  try {
-    const assessmentResponse = await adminService.applicantEntries(req.body);
+  static async applicantEntries(req, res) {
+    try {
+      const assessmentResponse = await AdminService.applicantEntries(req.body);
 
-    return res.status(assessmentResponse.code).json(assessmentResponse);
-  } catch (error) {
-    next(error);
+      return res.status(assessmentResponse.code).json(assessmentResponse);
+    } catch (error) {
+      return responseProvider(res, error.data, error.message, error.code);
+    }
   }
-};
 
-const assessmentHistory = async (req, res, next) => {
-  try {
-    const assessmentResponse = await adminService.assessmentHistory(req.body);
+  static async assessmentHistory(req, res) {
+    try {
+      const assessmentResponse = await AdminService.assessmentHistory(req.body);
 
-    return res.status(assessmentResponse.code).json(assessmentResponse);
-  } catch (error) {
-    next(error);
+      return res.status(assessmentResponse.code).json(assessmentResponse);
+    } catch (error) {
+      return responseProvider(res, error.data, error.message, error.code);
+    }
   }
-};
 
-const applicantsResults = async (req, res, next) => {
-  try {
-    const applicantsResultsResponse = await adminService.applicantsResults(req.body);
+  static async applicantsResults(req, res) {
+    try {
+      const applicantsResultsResponse = await AdminService.applicantsResults(req.body);
 
-    return res.status(applicantsResultsResponse.code).json(applicantsResultsResponse);
-  } catch (error) {
-    next(error);
+      return res.status(applicantsResultsResponse.code).json(applicantsResultsResponse);
+    } catch (error) {
+      return responseProvider(res, error.data, error.message, error.code);
+    }
   }
-};
 
-const editBatchId = async (req, res, next) => {
-  try {
-    const editBatchIdResponse = await adminService.editBatchId(req.body);
+  static async editBatchId(req, res) {
+    try {
+      const editBatchIdResponse = await AdminService.editBatchId(req.body);
 
-    return res.status(editBatchIdResponse.code).json(editBatchIdResponse);
-  } catch (error) {
-    next(error);
+      return res.status(editBatchIdResponse.code).json(editBatchIdResponse);
+    } catch (error) {
+      return responseProvider(res, error.data, error.message, error.code);
+    }
   }
-};
 
-const editTimer = async (req, res, next) => {
-  try {
-    const editTimerResponse = await adminService.updateTimer(req.body);
+  static async editTimer(req, res) {
+    try {
+      const editTimerResponse = await AdminService.updateTimer(req.body);
 
-    return res.status(editTimerResponse.code).json(editTimerResponse);
-  } catch (error) {
-    next(error);
+      return res.status(editTimerResponse.code).json(editTimerResponse);
+    } catch (error) {
+      return responseProvider(res, error.data, error.message, error.code);
+    }
   }
-};
-
-// adminService.updateTimer
+}
+// AdminService.updateTimer
 
 module.exports = {
-  createApplication,
-  createAssessment,
-  approveDeclineApplication,
-  applicationDashboard,
-  applicantEntries,
-  assessmentHistory,
-  applicantsResults,
-  editBatchId,
-  editTimer,
+  AdminController,
 };

@@ -46,8 +46,6 @@ const invalidSignUpPhoneNumber = {
   phonenumber: '122323',
 };
 
-
-
 const loginData = {
   email: 'olduser@gmail.com',
   password: 'gnopgn4t45y-4rggkjnr343',
@@ -144,20 +142,20 @@ const validApplicationInfo = {
   image: 'pasportPicture.png',
   cv: 'awesomeCv.pdf',
 };
-const validLoginIn = {
-  email: 'dubiousApplicant@gmail.com',
-  password: 'gnopgn4t45y-4rggkjnr343',
-};
+// const validLoginIn = {
+//   email: 'dubiousApplicant@gmail.com',
+//   password: 'gnopgn4t45y-4rggkjnr343',
+// };
 
 const invalidEmailLoginDetails = {
   email: 'oldusermail.com',
   password: 'gkjnr343',
 };
 
-const invalidPasswordLoginDetails = {
-  email: 'old@usermail.com',
-  password: 'gkjnr343',
-};
+// const invalidPasswordLoginDetails = {
+//   email: 'old@usermail.com',
+//   password: 'gkjnr343',
+// };
 
 const invalidUrlLink = { link: '' };
 
@@ -189,7 +187,7 @@ const validCreateApplicationInputs = {
 const invalidBatch = { batch: 'hello world' };
 const invalidNewBatchId = { newBatchId: '' };
 
-const validBatchInputs = { batch: 2, newBatchId: 3};
+const validBatchInputs = { batch: 2, newBatchId: 3 };
 
 const invalidQuestions = {
   batch: 2,
@@ -327,8 +325,6 @@ describe('validation middleware', () => {
     expect(json.calledOnce).to.be.true;
     expect(json.args[0][0].message).to.equal('provide a valid phone number');
   });
-
-
 
   it('should call next for valid sign up input', () => {
     const req = { body: { ...loginData } };

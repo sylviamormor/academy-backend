@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const adminControllers = require('../controllers/admin.controllers');
+const { AdminController } = require('../controllers/admin.controllers');
 const adminMiddlewares = require('../middlewares/admin.middleware');
 const adminValidator = require('../middlewares/validation.middleware');
 
@@ -12,7 +12,7 @@ router.post(
   '/application',
   adminValidator.checkCreateApplicationInputs,
   adminMiddlewares.checkBatchIdDuplicate,
-  adminControllers.createApplication,
+  AdminController.createApplication,
 );
 
 router.post(
@@ -20,20 +20,20 @@ router.post(
   adminValidator.checkCreateAssessmentInput,
   adminMiddlewares.checkBatchIdExistence,
   adminMiddlewares.checkAssessmentBatchId,
-  adminControllers.createAssessment,
+  AdminController.createAssessment,
 );
 
 // approve or decline student application
 router.put(
   '/approve',
   adminValidator.checkDecisionInput,
-  adminControllers.approveDeclineApplication,
+  AdminController.approveDeclineApplication,
 );
 
-router.get('/dashboard', adminControllers.applicationDashboard);
-router.get('/entries', adminControllers.applicantEntries);
-router.get('/history', adminControllers.assessmentHistory);
-router.get('/results', adminControllers.applicantsResults);
+router.get('/dashboard', AdminController.applicationDashboard);
+router.get('/entries', AdminController.applicantEntries);
+router.get('/history', AdminController.assessmentHistory);
+router.get('/results', AdminController.applicantsResults);
 
 // TODO update all old batches to new batches in all tables
 router.put(
@@ -41,7 +41,7 @@ router.put(
   adminValidator.checkBatchIdInput,
   adminMiddlewares.checkBatchIdExistence,
   adminMiddlewares.checkNewBatchId,
-  adminControllers.editBatchId,
+  AdminController.editBatchId,
 );
 
 // TODO the batch checker should check
@@ -50,7 +50,7 @@ router.put(
   '/timer',
   adminValidator.checkTimerInput,
   adminMiddlewares.checkBatchIdExistence,
-  adminControllers.editTimer,
+  AdminController.editTimer,
 );
 
 module.exports = router;

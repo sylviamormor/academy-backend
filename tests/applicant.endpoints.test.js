@@ -5,7 +5,7 @@ const app = require('../index');
 // const { applicantInfo } = require('../fixtures/applicant.fixture');
 
 const applicantInfo = {
-  email: 'fifa@gmail.com',
+  email: 'gfa@gmail.com',
   firstname: 'fifa',
   lastname: 'league',
   password: 'ugn9ug984ngregre',
