@@ -11,21 +11,13 @@ const applicantMiddleware = require('../middlewares/applicant.middleware');
 
 // const { imgUpload } = require("../../utils/multer");
 
-const { ApplicantControllers } = require('../controllers/applicant.controllers');
+const applicantControllers = require('../controllers/applicant.controllers');
 
 // signup route
-router.post(
-  '/signup',
-  validator.checkSignUpApplicantInput,
-  ApplicantControllers.createApplicant,
-);
+router.post('/signup', validator.checkSignUpApplicantInput, applicantControllers.createApplicant);
 
 // login route
-router.post(
-  '/login',
-  validator.checkApplicantLoginInput,
-  ApplicantControllers.signInApplicant,
-);
+router.post('/login', validator.checkApplicantLoginInput, applicantControllers.signInApplicant);
 
 // application input route
 
@@ -33,13 +25,12 @@ router.post(
   '/upload',
   checkToken,
   validator.checkApplicationInput,
-  applicantMiddleware.getCurrentBatchId,
   applicantMiddleware.setBatchId,
   applicantMiddleware.applicantImageUploader,
-  ApplicantControllers.applicantImageDb,
+  applicantControllers.applicantImageDb,
   applicantMiddleware.applicantDocUploader,
-  ApplicantControllers.applicantDocDb,
-  ApplicantControllers.applicantDetailsDb,
+  applicantControllers.applicantDocDb,
+  applicantControllers.applicantDetailsDb,
 );
 
 module.exports = router;

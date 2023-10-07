@@ -2,17 +2,16 @@ const express = require('express');
 
 const router = express.Router();
 
-const { AdminController } = require('../controllers/admin.controllers');
+const adminControllers = require('../controllers/admin.controllers');
 const adminMiddlewares = require('../middlewares/admin.middleware');
 const adminValidator = require('../middlewares/validation.middleware');
-
-// const { dashboard } = require('../queries/admin.queries');
 
 router.post(
   '/application',
   adminValidator.checkCreateApplicationInputs,
+  adminMiddlewares.changeDateFormat,
   adminMiddlewares.checkBatchIdDuplicate,
-  AdminController.createApplication,
+  adminControllers.createApplication,
 );
 
 router.post(
@@ -20,20 +19,20 @@ router.post(
   adminValidator.checkCreateAssessmentInput,
   adminMiddlewares.checkBatchIdExistence,
   adminMiddlewares.checkAssessmentBatchId,
-  AdminController.createAssessment,
+  adminControllers.createAssessment,
 );
 
 // approve or decline student application
 router.put(
   '/approve',
   adminValidator.checkDecisionInput,
-  AdminController.approveDeclineApplication,
+  adminControllers.approveDeclineApplication,
 );
 
-router.get('/dashboard', AdminController.applicationDashboard);
-router.get('/entries', AdminController.applicantEntries);
-router.get('/history', AdminController.assessmentHistory);
-router.get('/results', AdminController.applicantsResults);
+router.get('/dashboard', adminControllers.applicationDashboard);
+router.get('/entries', adminControllers.applicantEntries);
+router.get('/history', adminControllers.assessmentHistory);
+router.get('/results', adminControllers.applicantsResults);
 
 // TODO update all old batches to new batches in all tables
 router.put(
@@ -41,16 +40,15 @@ router.put(
   adminValidator.checkBatchIdInput,
   adminMiddlewares.checkBatchIdExistence,
   adminMiddlewares.checkNewBatchId,
-  AdminController.editBatchId,
+  adminControllers.editBatchId,
 );
 
 // TODO the batch checker should check
-// the batch in assessment
 router.put(
   '/timer',
   adminValidator.checkTimerInput,
   adminMiddlewares.checkBatchIdExistence,
-  AdminController.editTimer,
+  adminControllers.editTimer,
 );
 
 module.exports = router;

@@ -647,3 +647,17 @@ describe('validation middleware', () => {
     expect(json.args[0][0].message).to.equal('provide a valid application decision');
   });
 });
+
+
+// TODO test errors in the throw catch
+// it('should pass the error into the callback if save fails', function() {
+//   var expectedError = new Error('oops');
+//   var save = sinon.stub(Database, 'save');
+//   save.throws(expectedError);
+//   var callback = sinon.spy();
+
+//   setupNewUser({ name: 'foo' }, callback);
+
+//   save.restore();
+//   sinon.assert.calledWith(callback, expectedError);
+// });

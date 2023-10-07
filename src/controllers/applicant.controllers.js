@@ -1,69 +1,74 @@
-const { ApplicantService } = require('../services/applicant.service');
-const { responseProvider } = require('../../helper/response');
+/* eslint-disable consistent-return */
+const applicantService = require('../services/applicant.service');
 
-class ApplicantControllers {
 // Controller creating a new applicant
-  static async createApplicant(req, res) {
-    try {
-      const response = await ApplicantService.createApplicant(req.body);
+const createApplicant = async (req, res, next) => {
+  try {
+    const response = await applicantService.createApplicant(req.body);
 
-      return res.status(response.code).json(response);
-    } catch (error) {
-      return responseProvider(res, error.data, error.message, error.code);
-    }
+    return res.status(response.code).json(response);
+  } catch (error) {
+    next(error);
   }
+};
 
-  // Login controller
+// Login controller
 
-  static async signInApplicant(req, res) {
-    try {
-      const result = await ApplicantService.loginApplicant(req.body);
-      return res.status(result.code).json(result);
-    } catch (error) {
-      return responseProvider(res, error.data, error.message, error.code);
-    }
+const signInApplicant = async (req, res, next) => {
+  try {
+    const result = await applicantService.loginApplicant(req.body);
+    return res.status(result.code).json(result);
+  } catch (error) {
+    next(error);
   }
+};
 
-  // upload applicant image src to database
-  static async applicantImageDb(req, res) {
-    try {
-      const { email } = req.body;
+// upload applicant image src to database
+const applicantImageDb = async (req, res, next) => {
+  try {
+    const { email } = req.body;
 
-      const imageUrl = req.imgUrl;
+    const imageUrl = req.imgUrl;
 
-      await ApplicantService.setApplicantImageDb(imageUrl, email);
+    await applicantService.setApplicantImageDb(imageUrl, email);
 
-      // return res.status(result.code).json(result);
-    } catch (error) {
-      return responseProvider(res, error.data, error.message, error.code);
-    }
+    // return res.status(result.code).json(result);
+    return next();
+  } catch (error) {
+    next(error);
   }
+};
 
-  // Upload doc url to database
-  static async applicantDocDb(req, res) {
-    try {
-      const { email } = req.body;
+// Upload doc url to database
+const applicantDocDb = async (req, res, next) => {
+  try {
+    const { email } = req.body;
 
-      const { cvUrl } = req;
+    const { cvUrl } = req;
 
-      await ApplicantService.setApplicantDocDb(cvUrl, email);
-    } catch (error) {
-      return responseProvider(res, error.data, error.message, error.code);
-    }
+    await applicantService.setApplicantDocDb(cvUrl, email);
+
+    return next();
+  } catch (error) {
+    next(error);
   }
+};
 
-  // Upload applicant details to database
-  static async applicantDetailsDb(req, res) {
-    try {
-      const response = await ApplicantService.setApplicantDetailsDb(req.body);
+// Upload applicant details to database
+const applicantDetailsDb = async (req, res, next) => {
+  try {
+    const response = await applicantService.setApplicantDetailsDb(req.body);
 
-      return res.status(response.code).json(response);
-    } catch (error) {
-      return responseProvider(res, error.data, error.message, error.code);
-    }
+    return res.status(response.code).json(response);
+  } catch (error) {
+    next(error);
   }
-}
+};
 
 module.exports = {
-  ApplicantControllers,
+  createApplicant,
+  signInApplicant,
+  applicantImageDb,
+  applicantDocDb,
+  applicantDetailsDb,
 };

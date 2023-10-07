@@ -7,33 +7,16 @@ const adminQueries = require('../queries/admin.queries');
 const cloudinary = require('../../utils/cloudinary');
 const { responseProvider } = require('../../helper/response');
 
-// const checkIfIdExists = async (req, res, next) => {
-//   try {
-//     const { id } = req.params;
-//     const [applicant = null] = await runQuery(applicantQueries.fetchApplicantById, [id]);
-
-//     if (!applicant) {
-//       return responseProvider(res, null, 'Applicant does not exist', 400);
-//     }
-
-//     req.applicant = applicant;
-//     return next();
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
-
 // set applicant batch id
 const getCurrentBatchId = async (req, res, next) => {
   try {
     const [{ batch_id = null }] = await runQuery(adminQueries.currentBatch);
-
     if (!batch_id) {
       return responseProvider(res, null, 'batch id not found', 501);
     }
 
     req.batch_id = batch_id;
-    next();
+    return next();
   } catch (error) {
     return next(error);
   }
@@ -43,7 +26,7 @@ const getCurrentBatchId = async (req, res, next) => {
 const setBatchId = async (req, res, next) => {
   try {
     const { email } = req.body;
-    const { batch_id } = req.batch_id;
+    const batch_id = req.batch_id;
 
     const [setBatch = null] = await runQuery(
       applicantQueries.setApplicantBatchId,
@@ -93,7 +76,6 @@ const applicantImageUploader = async (req, res, next) => {
 const applicantDocUploader = async (req, res, next) => {
   try {
     const { cv } = req.body;
-
     const cvUrl = await getSecureUrl(cv);
 
     if (!cvUrl || cvUrl instanceof Error) {

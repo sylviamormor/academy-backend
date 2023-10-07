@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+/* eslint-disable consistent-return */
 //
 // TODO validate
 
@@ -117,10 +119,29 @@ const checkAssessmentBatchId = async (req, res, next) => {
   }
 };
 
+// TODO make date postgress compatible
+// DD/MM/YYYY -> MM-DD-YYYY
+const changeDateFormat = (req, res, next) => {
+  try {
+    const { closure_date } = req.body;
+    // split, replace - with /, change DD and MM position
+    const modifiedDate = closure_date.split('/');
+    // switch the position of the day and month
+    [modifiedDate[0], modifiedDate[1]] = [modifiedDate[1], modifiedDate[0]];
+
+    const newDate = modifiedDate.join('-');
+    req.body.newDate = newDate;
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
   checkBatchIdDuplicate,
   checkBatchIdExistence,
   checkIfEmailExists,
   checkNewBatchId,
   checkAssessmentBatchId,
+  changeDateFormat,
 };
