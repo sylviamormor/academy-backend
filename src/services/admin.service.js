@@ -76,12 +76,24 @@ const applicationDashboard = async () => {
   // get dashboards into single array
   // use every on the dashboard array to check for errors or null values
 
-  const [dashboardResponse1] = await runQuery(adminQueries.dashboardCurrentApplicantsAcademy);
-  const dashboardResponse2 = await runQuery(adminQueries.dashboardHistory);
-  const [dashboardResponse3] = await runQuery(adminQueries.dashboardTotalApplicantsAcademies);
-  const [dashboardResponse4] = await runQuery(adminQueries.currentAcademy);
+  const [
+    dashBoardCurrentApplicants, dashBoardHistory,
+    dashboardTotalApplicants, dashboardCurrentAcademy,
+  ] = await Promise.all([
+    runQuery(adminQueries.dashboardCurrentApplicantsAcademy),
+    runQuery(adminQueries.dashboardHistory),
+    runQuery(adminQueries.dashboardTotalApplicantsAcademies),
+    runQuery(adminQueries.currentAcademy),
+  ]);
 
-  if (!dashboardResponse1 || !dashboardResponse2 || !dashboardResponse3 || !dashboardResponse4) {
+  // dashBoard.some((items) => !item)
+
+  if (
+    !dashBoardCurrentApplicants
+      || !dashBoardHistory
+      || !dashboardTotalApplicants
+      || !dashboardCurrentAcademy
+  ) {
     throw {
       code: 404,
       status: 'error',
@@ -91,10 +103,11 @@ const applicationDashboard = async () => {
   }
 
   const dashboard = [
-    dashboardResponse1, dashboardResponse2,
-    dashboardResponse3, dashboardResponse4,
+    dashBoardCurrentApplicants, dashBoardHistory,
+    dashboardTotalApplicants, dashboardCurrentAcademy,
   ];
   return provideResponse('success', 200, 'information fetched successfully', dashboard);
+  // // await Promise.all
 };
 
 const applicantEntries = async () => {
@@ -109,7 +122,7 @@ const applicantEntries = async () => {
     };
   }
 
-  return provideResponse('success', 201, 'Applicant Entries fetched successfully', entriesResponse);
+  return provideResponse('success', 200, 'Applicant Entries fetched successfully', entriesResponse);
 };
 
 const assessmentHistory = async () => {
@@ -124,7 +137,7 @@ const assessmentHistory = async () => {
     };
   }
 
-  return provideResponse('success', 201, 'Assessment history fetched successfully', assessmentResponse);
+  return provideResponse('success', 200, 'Assessment history fetched successfully', assessmentResponse);
 };
 
 const applicantsResults = async () =>{
@@ -139,7 +152,7 @@ const applicantsResults = async () =>{
     };
   }
 
-  return provideResponse('success', 201, 'Results fetched successfully', resultResponse);
+  return provideResponse('success', 200, 'Results fetched successfully', resultResponse);
 };
 
 const editBatchId = async (body) =>{
