@@ -2,7 +2,7 @@
 const { expect } = require('chai');
 
 const sinon = require('sinon');
-const { ApplicantMiddleware, FetchBatchId, SecureUrl} = require('../src/middlewares/applicant.middleware');
+const applicantMiddleware = require('../src/middlewares/applicant.middleware');
 
 // eslint-disable-next-line no-undef
 describe('Testing Applicant Middlewares', () => {
@@ -19,38 +19,38 @@ describe('Testing Applicant Middlewares', () => {
     sinon.restore();
   });
 
-  it('should fetch current Batch Id', async () => {
+  it('should test null current Batch Id', async () => {
+    const response = [{ batch_id: null }];
+    const stubQuery = sinon.stub().resolves(response);
     const req = sinon.spy();
-    await ApplicantMiddleware.getCurrentBatchId(req, res, next);
 
-    expect(next.calledOnce).to.equal(true);
-    expect(status.calledOnce).to.be.false;
-    // expect(status.args[0][0]).to.equal(501);
-    expect(json.calledOnce).to.be.false;
-    // expect(json.args[0][0].message).to.equal('batch id not found');
+    await applicantMiddleware.getCurrentBatchId(req, res, next, stubQuery());
+
+    expect(next.calledOnce).to.equal(false);
+    expect(req.calledOnce).to.equal(false);
+    expect(status.calledOnce).to.be.true;
+    expect(status.args[0][0]).to.equal(501);
+    expect(json.calledOnce).to.be.true;
+    expect(json.args[0][0].message).to.equal('batch id not found');
   });
 
-  it('should test null current Batch Id ', async () => {
-    const stubQuery = sinon.stub(FetchBatchId, 'currentBatch').resolves(null);
+  it('should fetch current Batch Id with default query', async () => {
     const req = sinon.spy();
-    const stubResponse = await stubQuery();
 
-    const response = await ApplicantMiddleware.getCurrentBatchId(req, res, next);
+    await applicantMiddleware.getCurrentBatchId(req, res, next);
 
-    // expect(response.data.to.be.equal(null));
 
     expect(next.calledOnce).to.equal(true);
+    // expect(req.calledOnce).to.equal(true);
     expect(status.calledOnce).to.be.false;
-    // expect(status.args[0][0]).to.equal(501);
     expect(json.calledOnce).to.be.false;
-    // expect(json.args[0][0].message).to.equal('batch id not found');
   });
 
   // eslint-disable-next-line no-undef
   it('should set Batch Id', async () => {
     const req = { batch_id: 1 };
 
-    const response = await ApplicantMiddleware.setBatchId(req, res, next);
+    await applicantMiddleware.setBatchId()(req.batch_id, res, next);
 
     expect(next.calledOnce).to.equal(true);
     expect(status.calledOnce).to.be.false;
@@ -58,11 +58,20 @@ describe('Testing Applicant Middlewares', () => {
     expect(json.calledOnce).to.be.false;
   });
 
-  it('should test applicant image uploader', async () => {
-    const req = sinon.spy();
-    const stubQuery = sinon.stub(SecureUrl, 'getSecureUrl').resolves('htttp://secureurlfiles');
+  it('should test invalid batch Id', async () => {
+    const req = { body: { email: '' }, batch_id: null };
 
-    await ApplicantMiddleware.applicantImageUploader(req, res, next);
+    await applicantMiddleware.setBatchId()(req.batch_id, res, next);
+
+    expect(next.calledOnce).to.equal(false);
+    expect(status.calledOnce).to.be.true;
+    expect(status.args[0][0]).to.equal(501);
+    expect(json.calledOnce).to.be.false;
+  });
+  it('should test applicant image uploader', async () => {
+    const req = { body: { image: '' } };
+
+    await applicantMiddleware.applicantImageUploader(req.body.image, res, next);
 
     expect(next.calledOnce).to.equal(true);
     expect(status.calledOnce).to.be.false;
@@ -72,35 +81,35 @@ describe('Testing Applicant Middlewares', () => {
 
   it('should test applicant image uploader error', async () => {
     const req = sinon.spy();
-    const stubQuery = sinon.stub(SecureUrl, 'getSecureUrl').throws('secure url compromised');
+    const stubQuery = sinon.stub().resolves(null);
 
-    await ApplicantMiddleware.applicantImageUploader(req, res, next);
+    await applicantMiddleware.applicantImageUploader(req, res, next, stubQuery);
 
-    expect(next.calledOnce).to.equal(true);
+    expect(next.calledOnce).to.equal(false);
     expect(status.calledOnce).to.be.false;
-    // expect(status.args[0][0]).to.equal(501);
+    expect(status.args[0][0]).to.equal(501);
     expect(json.calledOnce).to.be.false;
   });
 
-  it('should test document uploader', async () => {
+  it('should test applicant image uploader throw error', async () => {
     const req = sinon.spy();
-    const stubQuery = sinon.stub(SecureUrl, 'getSecureUrl').resolves('htttp://secureurlfiles');
+    const stubQuery = sinon.stub().throws('invalid file path');
 
-    await ApplicantMiddleware.applicantImageUploader(req, res, next);
+    await applicantMiddleware.applicantImageUploader(req, res, next, stubQuery);
+
     expect(next.calledOnce).to.equal(true);
     expect(status.calledOnce).to.be.false;
-    // expect(status.args[0][0]).to.equal(501);
     expect(json.calledOnce).to.be.false;
   });
 
   it('should test applicant document uploader error', async () => {
     const req = sinon.spy();
-    const stubQuery = sinon.stub(SecureUrl, 'getSecureUrl').throws('secure url compromised');
+    const stubQuery = sinon.stub().throws('invalid file path');
 
-    await ApplicantMiddleware.applicantImageUploader(req, res, next);
+    await applicantMiddleware.applicantImageUploader(req, res, next, stubQuery);
 
     expect(next.calledOnce).to.equal(true);
-    expect(status.calledOnce).to.be.false;
+    expect(status.calledOnce).to.be.true;
     // expect(status.args[0][0]).to.equal(501);
     expect(json.calledOnce).to.be.false;
   });

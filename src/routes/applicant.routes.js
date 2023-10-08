@@ -14,10 +14,10 @@ const applicantMiddleware = require('../middlewares/applicant.middleware');
 const applicantControllers = require('../controllers/applicant.controllers');
 
 // signup route
-router.post('/signup', validator.checkSignUpApplicantInput, applicantControllers.createApplicant);
+router.post('/signup', validator.checkSignUpApplicantInput, applicantControllers.createApplicant());
 
 // login route
-router.post('/login', validator.checkApplicantLoginInput, applicantControllers.signInApplicant);
+router.post('/login', validator.checkApplicantLoginInput, applicantControllers.signInApplicant());
 
 // application input route
 
@@ -25,12 +25,13 @@ router.post(
   '/upload',
   checkToken,
   validator.checkApplicationInput,
-  applicantMiddleware.setBatchId,
+  applicantMiddleware.getCurrentBatchId,
+  applicantMiddleware.setBatchId(),
   applicantMiddleware.applicantImageUploader,
-  applicantControllers.applicantImageDb,
+  applicantControllers.applicantImageDb(),
   applicantMiddleware.applicantDocUploader,
-  applicantControllers.applicantDocDb,
-  applicantControllers.applicantDetailsDb,
+  applicantControllers.applicantDocDb(),
+  applicantControllers.applicantDetailsDb(),
 );
 
 module.exports = router;

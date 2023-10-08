@@ -140,7 +140,7 @@ const assessmentHistory = async () => {
   return provideResponse('success', 200, 'Assessment history fetched successfully', assessmentResponse);
 };
 
-const applicantsResults = async () =>{
+const applicantsResults = async () => {
   const resultResponse = await runQuery(adminQueries.applicantsResults);
 
   if (!resultResponse) {
@@ -155,7 +155,7 @@ const applicantsResults = async () =>{
   return provideResponse('success', 200, 'Results fetched successfully', resultResponse);
 };
 
-const editBatchId = async (body) =>{
+const editBatchId = async (body) => {
   const { batchCreationDate, newBatchId } = body;
 
   const editBatchIdResponse = await runQuery(
