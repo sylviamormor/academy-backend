@@ -1,4 +1,5 @@
-const moment = require('moment');
+/* eslint-disable no-throw-literal */
+/* eslint-disable camelcase */
 const { provideResponse } = require('../../helper/response');
 const { runQuery } = require('../config/database.config');
 const adminQueries = require('../queries/admin.queries');
@@ -9,34 +10,24 @@ const adminQueries = require('../queries/admin.queries');
 
 const createApplication = async (body) => {
   const {
-    link, batch_id, closure_date, instructions,
+    link, batch_id, newDate, instructions,
   } = body;
-
-  // convert date to database compatible dd/mm/yyyy -> yyyy-mm-dd
-  const closureDate = moment(closure_date, 'DD/MM/YYYY').format('YYYY-MM-DD');
 
   const applicationResponse = await runQuery(
     adminQueries.createApplication,
-    [batch_id, link, closureDate, instructions],
+    [batch_id, link, newDate, instructions],
   );
 
   if (!applicationResponse) {
-    throw new Error(
-      {
-        code: 400,
-        status: 'error',
-        message: 'Application creation failed',
-        data: null,
-      },
-    );
+    throw {
+      code: 400,
+      status: 'error',
+      message: 'Application creation failed',
+      data: null,
+    };
   }
 
-  return provideResponse(
-    'success',
-    201,
-    'created application successfully',
-    applicationResponse,
-  );
+  return provideResponse('success', 201, 'created application successfully', applicationResponse);
 };
 
 const createAssessment = async (body) => {
@@ -48,22 +39,15 @@ const createAssessment = async (body) => {
   );
 
   if (!assessmentResponse) {
-    throw new Error(
-      {
-        code: 400,
-        status: 'error',
-        message: 'Application creation failed',
-        data: null,
-      },
-    );
+    throw {
+      code: 400,
+      status: 'error',
+      message: 'Application creation failed',
+      data: null,
+    };
   }
 
-  return provideResponse(
-    'success',
-    201,
-    'created application successfully',
-    assessmentResponse,
-  );
+  return provideResponse('success', 201, 'created application successfully', assessmentResponse);
 };
 
 // TODO approve or decline student application
@@ -76,179 +60,133 @@ const approveDeclineApplication = async (body) => {
   );
 
   if (!assessmentResponse) {
-    throw new Error(
-      {
-        code: 400,
-        status: 'error',
-        message: 'Approval process failed',
-        data: null,
-      },
-    );
+    throw {
+      code: 400,
+      status: 'error',
+      message: 'Approval process failed',
+      data: null,
+    };
   }
 
-  return provideResponse(
-    'success',
-    201,
-    'Approval process successfully',
-    assessmentResponse,
-  );
+  return provideResponse('success', 201, 'Approval process successfully', assessmentResponse);
 };
 
 const applicationDashboard = async () => {
-// TODO: get individual  dashboard results into objects for easy retrieval
+  // TODO: get individual  dashboard results into objects for easy retrieval
   // get dashboards into single array
   // use every on the dashboard array to check for errors or null values
 
-  const [dashboardResponse1] = await runQuery(
-    adminQueries.dashboardCurrentApplicantsAcademy,
-  );
+  const [
+    dashBoardCurrentApplicants, dashBoardHistory,
+    dashboardTotalApplicants, dashboardCurrentAcademy,
+  ] = await Promise.all([
+    runQuery(adminQueries.dashboardCurrentApplicantsAcademy),
+    runQuery(adminQueries.dashboardHistory),
+    runQuery(adminQueries.dashboardTotalApplicantsAcademies),
+    runQuery(adminQueries.currentAcademy),
+  ]);
 
-  const dashboardResponse2 = await runQuery(
-    adminQueries.dashboardHistory,
-  );
+  // dashBoard.some((items) => !item)
 
-  const [dashboardResponse3] = await runQuery(
-    adminQueries.dashboardTotalApplicantsAcademies,
-  );
-
-  const [dashboardResponse4] = await runQuery(
-    adminQueries.currentAcademy,
-  );
-
-  if (!dashboardResponse1 || !dashboardResponse2 || !dashboardResponse3 || !dashboardResponse4) {
-    throw new Error(
-      {
-        code: 404,
-        status: 'error',
-        message: 'Dashboard Information not found',
-        data: null,
-      },
-    );
+  if (
+    !dashBoardCurrentApplicants
+      || !dashBoardHistory
+      || !dashboardTotalApplicants
+      || !dashboardCurrentAcademy
+  ) {
+    throw {
+      code: 404,
+      status: 'error',
+      message: 'Dashboard Information not found',
+      data: null,
+    };
   }
 
-  const dashboard = [dashboardResponse1,
-    dashboardResponse2,
-    dashboardResponse3,
-    dashboardResponse4];
-
-  return provideResponse(
-    'success',
-    200,
-    'information fetched successfully',
-    dashboard,
-  );
+  const dashboard = [
+    dashBoardCurrentApplicants, dashBoardHistory,
+    dashboardTotalApplicants, dashboardCurrentAcademy,
+  ];
+  return provideResponse('success', 200, 'information fetched successfully', dashboard);
+  // // await Promise.all
 };
 
 const applicantEntries = async () => {
-  const entriesResponse = await runQuery(
-    adminQueries.applicationEntries,
-  );
+  const entriesResponse = await runQuery(adminQueries.applicationEntries);
 
   if (!entriesResponse) {
-    throw new Error(
-      {
-        code: 404,
-        status: 'error',
-        message: 'Applicant Entries not found',
-        data: null,
-      },
-    );
+    throw {
+      code: 404,
+      status: 'error',
+      message: 'Applicant Entries not found',
+      data: null,
+    };
   }
 
-  return provideResponse(
-    'success',
-    200,
-    'Applicant Entries fetched successfully',
-    entriesResponse,
-  );
+  return provideResponse('success', 200, 'Applicant Entries fetched successfully', entriesResponse);
 };
 
 const assessmentHistory = async () => {
-  const assessmentResponse = await runQuery(
-    adminQueries.assessmentHistory,
-  );
+  const assessmentResponse = await runQuery(adminQueries.assessmentHistory);
 
   if (!assessmentResponse) {
-    throw new Error(
-      {
-        code: 404,
-        status: 'error',
-        message: 'Assessment history not found',
-        data: null,
-      },
-    );
+    throw {
+      code: 404,
+      status: 'error',
+      message: 'Assessment history not found',
+      data: null,
+    };
   }
 
-  return provideResponse(
-    'success',
-    200,
-    'Assessment history fetched successfully',
-    assessmentResponse,
-  );
+  return provideResponse('success', 200, 'Assessment history fetched successfully', assessmentResponse);
 };
 
 const applicantsResults = async () => {
-  const resultResponse = await runQuery(
-    adminQueries.applicantsResults,
-  );
+  const resultResponse = await runQuery(adminQueries.applicantsResults);
 
   if (!resultResponse) {
-    throw new Error(
-      {
-        code: 404,
-        status: 'error',
-        message: 'Results not found',
-        data: null,
-      },
-    );
+    throw {
+      code: 404,
+      status: 'error',
+      message: 'Results not found',
+      data: null,
+    };
   }
 
-  return provideResponse(
-    'success',
-    200,
-    'Results fetched successfully',
-    resultResponse,
-  );
+  return provideResponse('success', 200, 'Results fetched successfully', resultResponse);
 };
 
 const editBatchId = async (body) => {
-  const { batch, newBatchId } = body;
+  const { batchCreationDate, newBatchId } = body;
 
-  const editBatchIdResponse = await runQuery(adminQueries.editBatchId, [batch, newBatchId]);
+  const editBatchIdResponse = await runQuery(
+    adminQueries.editBatchId,
+    [batchCreationDate, newBatchId],
+  );
 
   if (!editBatchIdResponse) {
-    throw new Error(
-      {
-        code: 400,
-        status: 'error',
-        message: 'Edit batch Id failed',
-        data: null,
-      },
-    );
+    throw {
+      code: 400,
+      status: 'error',
+      message: 'Edit batch Id failed',
+      data: null,
+    };
   }
 
-  return provideResponse(
-    'success',
-    201,
-    'Batch Id edited successfully',
-    editBatchIdResponse,
-  );
+  return provideResponse('success', 201, 'Batch Id edited successfully', editBatchIdResponse);
 };
 
 const updateTimer = async (body) => {
-  const { batch, timer } = body;
+  const { batchId, timer } = body;
 
-  const editTimerResponse = await runQuery(adminQueries.updateTimer, [batch, timer]);
+  const editTimerResponse = await runQuery(adminQueries.updateTimer, [batchId, timer]);
 
   if (!editTimerResponse) {
-    throw new Error(
-      {
-        code: 400,
-        status: 'error',
-        message: 'Edit timer failed',
-        data: null,
-      },
-    );
+    throw {
+      code: 400,
+      status: 'error',
+      message: 'Edit timer failed',
+      data: null,
+    };
   }
 
   return provideResponse('success', 201, 'Timer edited successfully', editTimerResponse);

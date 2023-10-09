@@ -1,3 +1,5 @@
+/* eslint-disable consistent-return */
+/* eslint-disable camelcase */
 const moment = require('moment');
 const path = require('node:path');
 const isUrl = require('is-url');
@@ -23,7 +25,7 @@ const checkSignUpApplicantInput = (req, res, next) => {
     }
 
     if (typeof password !== 'string' || password.length < 8) {
-      return responseProvider(res, null, 'provide a valid password', 400);
+      return responseProvider(res, null, 'invalid email and password', 400);
     }
 
     if (typeof parseInt(phonenumber, 10) !== 'number' || phonenumber.length < 10) {
@@ -40,8 +42,31 @@ const checkSignUpApplicantInput = (req, res, next) => {
 function checkImageExtension(imageExtension) {
   const allowedExtensions = ['.png', '.jpg', '.jpeg'];
 
-  if (allowedExtensions.includes(imageExtension)) {
+  if (imageExtension && allowedExtensions.includes(imageExtension)) {
     return true;
+  }
+  return false;
+}
+
+function isDateFormatValid(date) {
+  const pattern = /\d{1,2}[/]\d{1,2}[/]\d{4}/;
+  return pattern.test(date);
+}
+
+function isDateValid(date) {
+  const currentYear = moment().year();
+
+  const splitDate = date.split('/');
+  const day = parseInt(splitDate[0], 10);
+  const month = parseInt(splitDate[1], 10);
+  const year = parseInt(splitDate[2], 10);
+
+  if (day > 0 && day < 32) {
+    if (month > 1 && month < 13) {
+      if (year <= currentYear) {
+        return true;
+      }
+    }
   }
   return false;
 }
@@ -56,9 +81,12 @@ const checkApplicationInput = (req, res, next) => {
       // lastname,
 
       address,
-      course, university,
-      cgpa, dob,
-      image, cv,
+      course,
+      university,
+      cgpa,
+      dob,
+      image,
+      cv,
     } = req.body;
 
     // if (typeof email !== 'string' || !email.includes('@')) {
@@ -89,14 +117,9 @@ const checkApplicationInput = (req, res, next) => {
       return responseProvider(res, null, 'provide a valid cgpa', 400);
     }
 
-    if (!moment(dob, 'DD/MM/YYYY', true).isValid) {
+    if (!isDateFormatValid(dob) || !isDateValid(dob)) {
       return responseProvider(res, null, 'provide a valid date of birth', 400);
     }
-
-    // if  (image.split('.').pop() !== 'png') {
-
-    //   return responseProvider( res, null, 'provide a valid image', 400)
-    // }
 
     if (checkImageExtension(path.extname(image)) === false) {
       return responseProvider(res, null, 'provide a valid image', 400);
@@ -117,11 +140,11 @@ const checkApplicantLoginInput = (req, res, next) => {
     const { email, password } = req.body;
 
     if (typeof email !== 'string' || !email.includes('@')) {
-      return responseProvider(res, null, 'provide a valid email', 400);
+      return responseProvider(res, null, 'invalid email and password', 400);
     }
 
     if (typeof password !== 'string' || password.length < 8) {
-      return responseProvider(res, null, 'provide a valid password', 400);
+      return responseProvider(res, null, 'invalid email and password', 400);
     }
 
     next();
@@ -144,11 +167,11 @@ const checkCreateApplicationInputs = (req, res, next) => {
       return responseProvider(res, null, 'provide a valid batch Id', 400);
     }
 
-    if (!moment(closure_date, 'DD/MM/YYYY', true).isValid) {
-      return responseProvider(res, null, 'provide a valid application closure date', 400);
+    if (!isDateFormatValid(closure_date) || !isDateValid(closure_date)) {
+      return responseProvider(res, null, 'provide a valid closure date', 400);
     }
 
-    if (!instructions) {
+    if (typeof instructions !== 'string' || !instructions) {
       return responseProvider(res, null, 'provide valid instructions', 400);
     }
 
@@ -167,7 +190,7 @@ const checkCreateAssessmentInput = (req, res, next) => {
     }
 
     if (typeof question !== 'object') {
-      return responseProvider(res, null, 'provide a valid batch Id', 400);
+      return responseProvider(res, null, 'provide valid questions', 400);
     }
 
     if (typeof timer !== 'number') {
@@ -192,7 +215,7 @@ const checkDecisionInput = (req, res, next) => {
     const { email, applicationStatus } = req.body;
 
     if (typeof email !== 'string' || !email.includes('@')) {
-      return responseProvider(res, null, 'provide a valid email address', 400);
+      return responseProvider(res, null, 'provide a valid email', 400);
     }
 
     if (!adminMiddlewares.checkIfEmailExists(email)) {
@@ -245,4 +268,7 @@ module.exports = {
   checkDecisionInput,
   checkBatchIdInput,
   checkTimerInput,
+  checkImageExtension,
+  isDateFormatValid,
+  isDateValid,
 };

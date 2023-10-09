@@ -1,13 +1,182 @@
+// /* eslint-disable no-throw-literal */
+// const bcrypt = require('bcrypt');
+// const jwt = require('jsonwebtoken');
+// const { provideResponse } = require('../../helper/response');
+// // const applicantQuery = require('../queries/applicant.queries');
+// const { runQuery } = require('../config/database.config');
+// const config = require('../config/env/index');
+// // create a applicant
+// const createApplicant = async (body, applicantQuery) => {
+//   const {
+//     password, firstname, lastname, email, phonenumber,
+//   } = body;
+
+//   // Check if applicant already exist in db
+//   const applicantExist = await runQuery(applicantQuery.findApplicantByEmail, [email]);
+
+//   if (applicantExist.length > 0) {
+//     // eslint-disable-next-line no-throw-literal
+//     throw {
+//       code: 409,
+//       message: 'Applicant already exists',
+//       data: null,
+//       status: 'error',
+//     };
+//   }
+//   const saltRounds = 12;
+//   const hash = bcrypt.hashSync(password, saltRounds);
+
+//   const response = await runQuery(applicantQuery.addApplicant, [
+//     email,
+//     firstname,
+//     lastname,
+//     hash,
+//     phonenumber,
+//   ]);
+
+//   return provideResponse(
+//     'success',
+//     201,
+//     'New applicant added successfully!',
+//     response[0],
+//   );
+// };
+
+// // applicant login
+
+// const loginApplicant = async (body, applicantQuery) => {
+//   const { email, password } = body;
+
+//   // Check if that applicant exists inside the db
+//   const applicant = await runQuery(applicantQuery.findApplicantByEmail, [email]);
+
+//   if (applicant.length === 0) {
+//     throw {
+//       code: 404,
+//       status: 'error',
+//       message: 'Invalid Email',
+//       data: null,
+//     };
+//   }
+
+//   // Compare applicant passwords
+//   const { password: dbPassword, id } = applicant[0];
+
+//   const applicantPassword = bcrypt.compareSync(password, dbPassword);
+
+//   if (!applicantPassword) {
+//     throw {
+//       code: 400,
+//       status: 'error',
+//       message: 'Wrong email and password combination',
+//       data: null,
+//     };
+//   }
+
+//   const options = {
+//     expiresIn: '1d',
+//   };
+
+//   // Generate token for authentication purposes
+//   const token = jwt.sign(
+//     {
+//       id,
+//       email,
+//     },
+//     config.JWT_SECRET_KEY,
+//     options,
+//   );
+//   return {
+//     status: 'success',
+//     message: 'Applicant login successfully',
+//     code: 200,
+//     data: {
+//       id,
+//       email,
+//       token,
+//     },
+//   };
+// };
+
+// // Fetches all applicants in the database
+// const getAllApplicants = async (applicantQuery) => {
+//   const applicants = await runQuery(applicantQuery.fetchAllApplicants);
+//   return provideResponse(
+//     'success',
+//     200,
+//     'Applicants fetched successfully',
+//     { applicants },
+//   );
+// };
+
+// // upload applicant image src to database
+// const setApplicantImageDb = async (email, imageUrl, applicantQuery) => {
+//   const [applicantImg = null] = await runQuery(applicantQuery.applicantImgSrc, [imageUrl, email]);
+
+//   if (!applicantImg) {
+//     throw {
+//       code: 400,
+//       status: 'error',
+//       message: 'Applicant image not received',
+//       data: null,
+//     };
+//   }
+// };
+
+// // Upload doc url to database
+// const setApplicantDocDb = async (email, cvUrl, applicantQuery) => {
+//   const [applicantDoc = null] = await runQuery(applicantQuery.applicantDocumentSrc, [cvUrl, email]);
+
+//   if (!applicantDoc) {
+//     throw {
+//       code: 400,
+//       status: 'error',
+//       message: 'Applicant cv has not been received',
+//       data: null,
+//     };
+//   }
+// };
+
+// // Upload applicants details to database
+// const setApplicantDetailsDb = async (body, applicantQuery) => {
+//   const {
+//     address, course, university, cgpa, dob, email,
+//   } = body;
+
+//   const [applicantDoc = null] = await runQuery(
+//     applicantQuery.applicantDetails,
+//     [address, course, university, cgpa, dob, email],
+//   );
+
+//   if (!applicantDoc) {
+//     throw {
+//       code: 400,
+//       status: 'error',
+//       message: 'Applicant details has not been received',
+//       data: null,
+//     };
+//   }
+
+//   return provideResponse('success', 201, 'Applicant details added successfully!', applicantDoc);
+// };
+
+// module.exports = {
+//   createApplicant,
+//   loginApplicant,
+//   getAllApplicants,
+//   setApplicantImageDb,
+//   setApplicantDocDb,
+//   setApplicantDetailsDb,
+// };
 /* eslint-disable no-throw-literal */
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { provideResponse } = require('../../helper/response');
-const applicantQuery = require('../queries/applicant.queries');
+// const applicantQuery = require('../queries/applicant.queries');
 const { runQuery } = require('../config/database.config');
 const config = require('../config/env/index');
-
 // create a applicant
-const createApplicant = async (body) => {
+const createApplicant = async (body, applicantQuery) => {
   const {
     password, firstname, lastname, email, phonenumber,
   } = body;
@@ -45,7 +214,7 @@ const createApplicant = async (body) => {
 
 // applicant login
 
-const loginApplicant = async (body) => {
+const loginApplicant = async (body, applicantQuery) => {
   const { email, password } = body;
 
   // Check if that applicant exists inside the db
@@ -100,7 +269,7 @@ const loginApplicant = async (body) => {
 };
 
 // Fetches all applicants in the database
-const getAllApplicants = async () => {
+const getAllApplicants = async (applicantQuery) => {
   const applicants = await runQuery(applicantQuery.fetchAllApplicants);
   return provideResponse(
     'success',
@@ -111,7 +280,7 @@ const getAllApplicants = async () => {
 };
 
 // upload applicant image src to database
-const setApplicantImageDb = async (email, imageUrl) => {
+const setApplicantImageDb = async (email, imageUrl, applicantQuery) => {
   const [applicantImg = null] = await runQuery(applicantQuery.applicantImgSrc, [imageUrl, email]);
 
   if (!applicantImg) {
@@ -125,7 +294,7 @@ const setApplicantImageDb = async (email, imageUrl) => {
 };
 
 // Upload doc url to database
-const setApplicantDocDb = async (email, cvUrl) => {
+const setApplicantDocDb = async (email, cvUrl, applicantQuery) => {
   const [applicantDoc = null] = await runQuery(applicantQuery.applicantDocumentSrc, [cvUrl, email]);
 
   if (!applicantDoc) {
@@ -139,7 +308,7 @@ const setApplicantDocDb = async (email, cvUrl) => {
 };
 
 // Upload applicants details to database
-const setApplicantDetailsDb = async (body) => {
+const setApplicantDetailsDb = async (body, applicantQuery) => {
   const {
     address, course, university, cgpa, dob, email,
   } = body;

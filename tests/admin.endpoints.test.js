@@ -5,7 +5,7 @@ const app = require('../index');
 // const { userData } = require( '../fixtures/user.fixture.js');
 
 const assessmentData = {
-  batch: 2,
+  batch: 4,
   question: {
 
     1: {
@@ -43,12 +43,17 @@ const applicationData = {
 };
 
 const timerData = {
+  batch: 1,
+  timer: 2000,
+};
+
+const timerDataNonExistingBatchId = {
   batch: 21,
   timer: 2000,
 };
 
 const approvalData = {
-  email: 'math@efef.com',
+  email: 'newuser@gmail.com',
   applicationStatus: 'declined',
 };
 
@@ -93,5 +98,10 @@ describe('Testing Admin Endpoints', () => {
   it('should test edit timer', async () => {
     const res = await request(app).put('/api/v1/admin/timer').send(timerData);
     expect(res.status).to.equal(201);
+  });
+
+  it('should test existing batch id before editing timer', async () => {
+    const res = await request(app).put('/api/v1/admin/timer').send(timerDataNonExistingBatchId);
+    expect(res.status).to.equal(409);
   });
 });

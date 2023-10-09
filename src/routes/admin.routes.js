@@ -6,11 +6,10 @@ const adminControllers = require('../controllers/admin.controllers');
 const adminMiddlewares = require('../middlewares/admin.middleware');
 const adminValidator = require('../middlewares/validation.middleware');
 
-// const { dashboard } = require('../queries/admin.queries');
-
 router.post(
   '/application',
   adminValidator.checkCreateApplicationInputs,
+  adminMiddlewares.changeDateFormat,
   adminMiddlewares.checkBatchIdDuplicate,
   adminControllers.createApplication,
 );
@@ -45,7 +44,6 @@ router.put(
 );
 
 // TODO the batch checker should check
-// the batch in assessment
 router.put(
   '/timer',
   adminValidator.checkTimerInput,

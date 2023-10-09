@@ -9,7 +9,7 @@ const checkToken = (req, res, next) => {
     const { authorization } = req.headers;
 
     if (!authorization) {
-      return res.status(400).json({
+      return res.status(401).json({
         status: 'error',
         code: 401,
         message: 'You are not logged in!',
@@ -22,7 +22,7 @@ const checkToken = (req, res, next) => {
     const applicant = jwt.verify(token, SECRET);
 
     if (!applicant) {
-      return res.status(400).json({
+      return res.status(401).json({
         status: 'error',
         code: 401,
         message: 'You are not authorized to make this request!',

@@ -1,3 +1,5 @@
+const { responseProvider } = require('../../helper/response');
+
 /**
  * Error response middleware for 404 not found.
  *
@@ -21,7 +23,8 @@ module.exports.notFound = function notFound(req, res) {
  */
 // eslint-disable-next-line no-unused-vars
 module.exports.appErrorHandler = function appErrorHandler(err, req, res, next) {
-  if (err.code && typeof err.code === 'number') {
+  try {
+    if (err.code && typeof err.code === 'number') {
     // console.log(`
     //   status - ${err.code}
     //   message - ${err.message}
@@ -29,12 +32,13 @@ module.exports.appErrorHandler = function appErrorHandler(err, req, res, next) {
     //   method - ${req.method}
     //   IP - ${req.ip}
     // `);
-
-    res.status(err.code).json({
-      code: err.code,
-      message: err.message,
-    });
-  } else {
+      return responseProvider(res, null, err.message, err.code);
+    // res.status(err.code).json({
+    //   code: err.code,
+    //   message: err.message,
+    // });
+    }
+  } catch (error) {
     next(err);
   }
 };
@@ -55,12 +59,14 @@ module.exports.genericErrorHandler = function genericErrorHandler(err, req, res,
   //   method - ${req.method}
   //   IP - ${req.ip}
   // `);
-
-  res.status(500).json({
-    code: 500,
-    data: '',
-    message: err.message,
-  });
-
-  next(err);
+  try {
+    return responseProvider(res, null, err.message, 500);
+    // return res.status(500).json({
+    //   code: 500,
+    //   data: '',
+    //   message: err.message,
+    // });
+  } catch (error) {
+    next(err);
+  }
 };
