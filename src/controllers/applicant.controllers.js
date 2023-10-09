@@ -1,4 +1,4 @@
-/* eslint-disable consistent-return */
+/ eslint-disable consistent-return /
 const applicantQuery = require('../queries/applicant.queries');
 const applicantService = require('../services/applicant.service');
 

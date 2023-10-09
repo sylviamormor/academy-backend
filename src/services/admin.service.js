@@ -1,5 +1,5 @@
-/* eslint-disable no-throw-literal */
-/* eslint-disable camelcase */
+/ eslint-disable no-throw-literal /
+/ eslint-disable camelcase /
 const { provideResponse } = require('../../helper/response');
 const { runQuery } = require('../config/database.config');
 const adminQueries = require('../queries/admin.queries');
