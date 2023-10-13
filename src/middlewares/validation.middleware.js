@@ -135,7 +135,7 @@ const checkApplicationInput = (req, res, next) => {
   }
 };
 
-const checkApplicantLoginInput = (req, res, next) => {
+const checkLoginInput = (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -261,7 +261,7 @@ const checkTimerInput = (req, res, next) => {
 };
 module.exports = {
   checkSignUpApplicantInput,
-  checkApplicantLoginInput,
+  checkLoginInput,
   checkApplicationInput,
   checkCreateApplicationInputs,
   checkCreateAssessmentInput,

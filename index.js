@@ -2,25 +2,32 @@
 require('./src/config/database.config');
 
 const express = require('express');
-// const enforceSSL = require('express-enforces-ssl');
+const enforceSSL = require('express-enforces-ssl');
+const cors = require("cors");
+const bodyParser = require('body-parser');
 const apiVersion1 = require('./src/config/versioning/v1');
 const { notFound, appErrorHandler, genericErrorHandler } = require('./src/middlewares/error.middleware');
 const envConfig = require('./src/config/env/index');
-// const bodyParser = require('body-parser');
 // const multer = require('multer');
 // const upload = multer();
 const app = express();
 
 const PORT = envConfig.APP_PORT || 7006;
 
+const corsOptions = {
+  origin: 'http://localhost:7000',
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 // app.enable('trust proxy');
 // app.use(enforceSSL());
 // for parsing application/json
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 
 // // for parsing application/xwww-
-// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // for parsing multipart/form-data
 // app.use(upload.array());

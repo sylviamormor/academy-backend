@@ -1,4 +1,4 @@
-eslint-disable no-throw-literal /
+/* eslint-disable no-throw-literal */
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { provideResponse } = require('../../helper/response');
@@ -60,7 +60,9 @@ const loginApplicant = async (body, applicantQuery) => {
   }
 
   // Compare applicant passwords
-  const { password: dbPassword, id } = applicant[0];
+  const {
+    password: dbPassword, id, firstname, lastname,
+  } = applicant[0];
 
   const applicantPassword = bcrypt.compareSync(password, dbPassword);
 
@@ -92,6 +94,8 @@ const loginApplicant = async (body, applicantQuery) => {
     code: 200,
     data: {
       id,
+      firstname,
+      lastname,
       email,
       token,
     },

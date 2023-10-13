@@ -1,5 +1,6 @@
-const dashboardTotalApplicantsAcademies = `
+const findAdminByEmail = `SELECT email, password FROM admin WHERE email=$1`;
 
+const dashboardTotalApplicantsAcademies = `
 SELECT 
 MAX (applicants.id) AS Total_Applicants, 
 MAX(batch_id) AS Total_Academies
@@ -114,6 +115,7 @@ const assessmentBatchId = 'SELECT batch FROM assesment WHERE batch=$1';
 // after taking the exams
 
 module.exports = {
+  findAdminByEmail,
   createApplication,
   createAssessment,
   fetchBatch,

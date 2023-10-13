@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS admin(
     role_type role DEFAULT 'admin',
     phonenumber VARCHAR(15) DEFAULT 0,
     address VARCHAR(100) DEFAULT 'area',
+    password VARCHAR,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 )

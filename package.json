@@ -14,8 +14,8 @@
     "migrate:up": "db-migrate up --config database.json -e dev",
     "migrate:down": "db-migrate down -c 2000 --config database.json -e dev",
     "seed:create": "db-migrate create:seeds --config database.json -e dev",
-    "seed:up": "db-migrate up:seeds --config database.json -e dev",
-    "seed:down": "db-migrate down:seeds --config database.json -e dev",
+    "seed:up": "node migrations/seeds/up.admin.seed.js",
+    "seed:down": "node migrations/seeds/down.admin.seed.js",
     "migrate-test:up": "db-migrate up --config database.json -e test",
     "migrate-test:down": "db-migrate down -c 200 -e test"
   },
