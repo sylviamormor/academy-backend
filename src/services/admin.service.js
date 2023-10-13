@@ -1,12 +1,69 @@
-/ eslint-disable no-throw-literal /
-/ eslint-disable camelcase /
+/* eslint-disable no-throw-literal */
+/* eslint-disable camelcase */
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const { provideResponse } = require('../../helper/response');
 const { runQuery } = require('../config/database.config');
 const adminQueries = require('../queries/admin.queries');
-
+const config = require('../config/env/index');
 // TODO: create a query to edit applications
 // already created
 //
+
+// admin login
+
+const loginAdmin = async (body) => {
+  const { email, password } = body;
+  // Check if that admin exists inside the db
+  const admin = await runQuery(adminQueries.findAdminByEmail, [email]);
+
+  if (admin.length === 0) {
+    throw {
+      code: 404,
+      status: 'error',
+      message: 'Invalid Email',
+      data: null,
+    };
+  }
+
+  // Compare admin passwords
+  const { password: dbPassword, id } = admin[0];
+
+  const applicantPassword = bcrypt.compareSync(password, dbPassword);
+
+  if (!applicantPassword) {
+    throw {
+      code: 400,
+      status: 'error',
+      message: 'Wrong email and password combination',
+      data: null,
+    };
+  }
+
+  const options = {
+    expiresIn: '1d',
+  };
+
+  // Generate token for authentication purposes
+  const token = jwt.sign(
+    {
+      id,
+      email,
+    },
+    config.JWT_SECRET_KEY,
+    options,
+  );
+  return {
+    status: 'success',
+    message: 'Admin login successfully',
+    code: 200,
+    data: {
+      id,
+      email,
+      token,
+    },
+  };
+};
 
 const createApplication = async (body) => {
   const {
@@ -117,12 +174,12 @@ const applicantEntries = async () => {
     throw {
       code: 404,
       status: 'error',
-      message: 'Applicant Entries not found',
+      message: 'Admin Entries not found',
       data: null,
     };
   }
 
-  return provideResponse('success', 200, 'Applicant Entries fetched successfully', entriesResponse);
+  return provideResponse('success', 200, 'Admin Entries fetched successfully', entriesResponse);
 };
 
 const assessmentHistory = async () => {
@@ -195,7 +252,7 @@ const updateTimer = async (body) => {
 // createAdminProfile,
 
 module.exports = {
-
+  loginAdmin,
   createApplication,
   createAssessment,
   approveDeclineApplication,

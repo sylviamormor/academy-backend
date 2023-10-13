@@ -25,13 +25,6 @@ module.exports.notFound = function notFound(req, res) {
 module.exports.appErrorHandler = function appErrorHandler(err, req, res, next) {
   try {
     if (err.code && typeof err.code === 'number') {
-    // console.log(`
-    //   status - ${err.code}
-    //   message - ${err.message}
-    //   url - ${req.originalUrl}
-    //   method - ${req.method}
-    //   IP - ${req.ip}
-    // `);
       return responseProvider(res, null, err.message, err.code);
     // res.status(err.code).json({
     //   code: err.code,
@@ -52,13 +45,6 @@ module.exports.appErrorHandler = function appErrorHandler(err, req, res, next) {
  * @param  {Function} next
  */
 module.exports.genericErrorHandler = function genericErrorHandler(err, req, res, next) {
-  // console.log(`
-  //   status - 500
-  //   message - ${err.stack}
-  //   url - ${req.originalUrl}
-  //   method - ${req.method}
-  //   IP - ${req.ip}
-  // `);
   try {
     return responseProvider(res, null, err.message, 500);
     // return res.status(500).json({

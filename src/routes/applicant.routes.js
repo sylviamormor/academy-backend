@@ -17,7 +17,7 @@ const applicantControllers = require('../controllers/applicant.controllers');
 router.post('/signup', validator.checkSignUpApplicantInput, applicantControllers.createApplicant());
 
 // login route
-router.post('/login', validator.checkApplicantLoginInput, applicantControllers.signInApplicant());
+router.post('/login', validator.checkLoginInput, applicantControllers.signInApplicant());
 
 // application input route
 

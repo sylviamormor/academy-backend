@@ -10,7 +10,7 @@ const addApplicant = `
 `;
 
 const findApplicantByEmail = `
- SELECT id, email, password FROM applicants WHERE email=$1
+ SELECT id,firstname, lastname, email, password FROM applicants WHERE email=$1
 `;
 
 // fetch all applicants from the db

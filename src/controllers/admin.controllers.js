@@ -1,5 +1,15 @@
 const adminService = require('../services/admin.service');
 
+// Admin Login controller
+const signInAdmin = async (req, res, next) => {
+  try {
+    const result = await adminService.loginAdmin(req.body);
+    return res.status(result.code).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const createApplication = async (req, res, next) => {
   try {
     const applicationResponse = await adminService.createApplication(req.body);
@@ -94,6 +104,7 @@ const editTimer = async (req, res, next) => {
 // adminService.updateTimer
 
 module.exports = {
+  signInAdmin,
   createApplication,
   createAssessment,
   approveDeclineApplication,
