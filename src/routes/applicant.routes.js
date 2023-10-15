@@ -1,10 +1,15 @@
 const express = require('express');
 
+const multer = require('multer');
+const path = require('path');
+
+// const fileStorage = multer.memoryStorage();
+
+// const upload = multer({ storage: fileStorage });
+
 const router = express.Router();
 const { checkToken } = require('../middlewares/auth.middleware');
-
 const validator = require('../middlewares/validation.middleware');
-
 const applicantMiddleware = require('../middlewares/applicant.middleware');
 
 // const { imgUpload, pdfUpload } = require("../../utils/multer");
@@ -21,9 +26,27 @@ router.post('/login', validator.checkLoginInput, applicantControllers.signInAppl
 
 // application input route
 
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, path.join(__dirname, 'uploads/'));
+  },
+  filename(req, file, cb) {
+    const uniqueSuffix = Math.round(Math.random() * 1E9);
+    cb(null, `${file.fieldname}-${uniqueSuffix}`);
+
+  },
+});
+
+const upload = multer({ storage });
+
+
+const applicantUploadedFiles = upload.array('files');
+
 router.post(
   '/upload',
-  checkToken,
+  // checkToken,
+  applicantUploadedFiles,
+  // applicantMiddleware.fileHandler,
   validator.checkApplicationInput,
   applicantMiddleware.getCurrentBatchId,
   applicantMiddleware.setBatchId(),
