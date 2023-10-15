@@ -7,7 +7,6 @@ const SECRET = config.JWT_SECRET_KEY;
 const checkToken = (req, res, next) => {
   try {
     const { authorization } = req.headers;
-
     if (!authorization) {
       return res.status(401).json({
         status: 'error',
@@ -17,9 +16,10 @@ const checkToken = (req, res, next) => {
       });
     }
 
-    const token = authorization.split(' ')[1];
+    // const token = authorization.split(' ')[1];
+    // const applicant = jwt.verify(token, SECRET);
 
-    const applicant = jwt.verify(token, SECRET);
+    const applicant = jwt.verify(authorization, SECRET);
 
     if (!applicant) {
       return res.status(401).json({

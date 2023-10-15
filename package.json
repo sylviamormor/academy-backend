@@ -36,8 +36,10 @@
   "homepage": "https://github.com/Albert-Osei/academy-backend#readme",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
     "chai": "^4.3.8",
-    "cloudinary": "^1.40.0",
+    "cloudinary": "^1.41.0",
+    "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "db-migrate": "^0.11.14",
     "db-migrate-pg": "^1.5.2",

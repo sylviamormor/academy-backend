@@ -62,7 +62,7 @@ function isDateValid(date) {
   const year = parseInt(splitDate[2], 10);
 
   if (day > 0 && day < 32) {
-    if (month > 1 && month < 13) {
+    if (month !== 0 && month < 13) {
       if (year <= currentYear) {
         return true;
       }
@@ -89,6 +89,7 @@ const checkApplicationInput = (req, res, next) => {
       cv,
     } = req.body;
 
+
     // if (typeof email !== 'string' || !email.includes('@')) {
     //   return responseProvider( res, null, 'provide a valid email', 400)
     // }
@@ -113,7 +114,7 @@ const checkApplicationInput = (req, res, next) => {
       return responseProvider(res, null, 'provide a valid university name', 400);
     }
 
-    if (typeof cgpa !== 'number') {
+    if (typeof parseInt(cgpa, 10) !== 'number') {
       return responseProvider(res, null, 'provide a valid cgpa', 400);
     }
 
