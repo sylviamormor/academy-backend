@@ -107,7 +107,7 @@ const createAssessment = async (body) => {
   return provideResponse('success', 201, 'created application successfully', assessmentResponse);
 };
 
-// TODO approve or decline student application
+
 const approveDeclineApplication = async (body) => {
   const { email, applicationStatus } = body;
 

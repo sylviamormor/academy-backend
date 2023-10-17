@@ -1,8 +1,8 @@
 /* eslint-disable consistent-return */
 /* eslint-disable camelcase */
 const moment = require('moment');
-const path = require('node:path');
 const isUrl = require('is-url');
+const path = require('path');
 const { responseProvider } = require('../../helper/response');
 const adminMiddlewares = require('./admin.middleware');
 
@@ -85,22 +85,8 @@ const checkApplicationInput = (req, res, next) => {
       university,
       cgpa,
       dob,
-      image,
-      cv,
     } = req.body;
 
-
-    // if (typeof email !== 'string' || !email.includes('@')) {
-    //   return responseProvider( res, null, 'provide a valid email', 400)
-    // }
-
-    // if (typeof firstname !== 'string' || !firstname) {
-    //   return responseProvider( res, null, 'provide a valid firstname', 400)
-    // }
-
-    // if (typeof lastname !== 'string' || !lastname) {
-    //   return responseProvider( res, null, 'provide a valid lastname', 400)
-    // }
 
     if (typeof address !== 'string' || !address) {
       return responseProvider(res, null, 'provide a valid address', 400);
@@ -122,16 +108,33 @@ const checkApplicationInput = (req, res, next) => {
       return responseProvider(res, null, 'provide a valid date of birth', 400);
     }
 
-    if (checkImageExtension(path.extname(image)) === false) {
-      return responseProvider(res, null, 'provide a valid image', 400);
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+// TODO check uploaded files
+
+const checkFileUpload = (req, res, next) => {
+  try {
+    const { cv } = req.files;
+    const { image } = req.files;
+
+    if (!checkImageExtension(path.extname(image[0].originalname)) || path.extname(cv[0].originalname) !== '.pdf') {
+      return responseProvider(res, null, 'invalid file', 400);
     }
 
-    if (path.extname(cv) !== '.pdf') {
-      return responseProvider(res, null, 'provide a valid cv document', 400);
+    // 2000000, // 2 mb
+    if (cv[0].size > 2000000 || image[0].size > 2000000) {
+      return responseProvider(res, null, 'invalid file size. file must be less than 2mb', 400);
     }
 
     next();
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
@@ -204,11 +207,6 @@ const checkCreateAssessmentInput = (req, res, next) => {
   }
 };
 
-// TODO: check if email has @
-// check if the email already exists
-// check if the application status is one of
-// pending, approved, declined
-
 const checkDecisionInput = (req, res, next) => {
   const applicationDecision = ['pending', 'declined', 'approved'];
 
@@ -263,6 +261,8 @@ const checkTimerInput = (req, res, next) => {
 module.exports = {
   checkSignUpApplicantInput,
   checkLoginInput,
+  // fileHandler,
+  checkFileUpload,
   checkApplicationInput,
   checkCreateApplicationInputs,
   checkCreateAssessmentInput,

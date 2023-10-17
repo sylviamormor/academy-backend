@@ -1,5 +1,5 @@
 /* Replace with your SQL commands */
-
+CREATE TYPE exam_status AS ENUM('pending', 'done');
 
 CREATE TABLE IF NOT EXISTS assesment(
     id SERIAL PRIMARY KEY,

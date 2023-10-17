@@ -26,7 +26,6 @@ const getCurrentBatchId = async (req, res, next, queries = queryRunner(adminQuer
       return responseProvider(res, null, 'batch id not found', 501);
     }
 
-
     req.batch_id = batch_id;
     return next();
   } catch (error) {
@@ -74,10 +73,11 @@ const getSecureUrl = async (filePath = '') => {
 // upload applicant image
 const applicantImageUploader = async (req, res, next) => {
   try {
-    const { image } = req.body;
+    const { image } = req.files;
+    const imagePath = image[0].path;
 
     const imgUrl = await new Promise((resolve) => {
-      setTimeout(() => resolve(getSecureUrl(image)), 900);
+      setTimeout(() => resolve(getSecureUrl(imagePath)), 900);
     });
 
     if (!imgUrl || imgUrl instanceof Error) {
@@ -95,10 +95,11 @@ const applicantImageUploader = async (req, res, next) => {
 // upload applicant cv document
 const applicantDocUploader = async (req, res, next) => {
   try {
-    const { cv } = req.body;
+    const { cv } = req.files;
+    const cvPath = cv[0].path;
 
     const cvUrl = await await new Promise((resolve) => {
-      setTimeout(() => resolve(getSecureUrl(cv)), 900);
+      setTimeout(() => resolve(getSecureUrl(cvPath)), 900);
     });
 
     if (!cvUrl || cvUrl instanceof Error) {
@@ -115,7 +116,6 @@ const applicantDocUploader = async (req, res, next) => {
 
 module.exports = {
   // checkIfIdExists,
-  // fileHandler,
   getCurrentBatchId,
   applicantImageUploader,
   applicantDocUploader,

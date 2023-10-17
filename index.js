@@ -2,6 +2,7 @@
 require('./src/config/database.config');
 
 const express = require('express');
+// const fileUpload = require('express-fileupload');
 // const enforceSSL = require('express-enforces-ssl');
 const cors = require('cors');
 // const bodyParser = require('body-parser');
@@ -21,7 +22,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+// app.use(fileUpload());
 
 app.listen(PORT, () => {
   console.log(`Application running on port ${PORT}`);
