@@ -1,6 +1,5 @@
 /* Replace with your SQL commands */
-CREATE TYPE exam_status AS ENUM('pending', 'done');
-CREATE TYPE application_status AS ENUM('pending', 'approved', 'declined');
+
 
 CREATE TABLE IF NOT EXISTS application(
     id SERIAL,

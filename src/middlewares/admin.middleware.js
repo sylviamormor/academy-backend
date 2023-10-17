@@ -1,11 +1,6 @@
 /* eslint-disable camelcase */
 /* eslint-disable consistent-return */
 //
-// TODO validate
-
-// check number of questions, options, answer
-// check if timer is an integer
-//
 
 const { runQuery } = require('../config/database.config');
 const adminQueries = require('../queries/admin.queries');
@@ -119,8 +114,6 @@ const checkAssessmentBatchId = async (req, res, next) => {
   }
 };
 
-// TODO make date postgress compatible
-// DD/MM/YYYY -> MM-DD-YYYY
 const changeDateFormat = (req, res, next) => {
   try {
     const { closure_date } = req.body;
